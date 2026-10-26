@@ -50,7 +50,7 @@ Both ready-to-play compiled `.jar` binaries are available in the [`releases/`](r
 
 | Loader | Target Version | Binary File | Direct Link |
 |:---|:---:|:---|:---:|
-| **Fabric** | Minecraft `1.21.x` / `26.1.2` | `exerion-1.0.4.jar` | [Download Fabric JAR](releases/exerion-1.0.4.jar) |
+| **Fabric** | Minecraft `1.21.x` / `26.1.2` | `exerion-1.0.5.jar` | [Download Fabric JAR](releases/exerion-1.0.5.jar) |
 | **NeoForge** | Minecraft `1.21.x` / `26.1.2` | `exerion-neoforge-1.0.5.jar` | [Download NeoForge JAR (Fixed Registry)](releases/exerion-neoforge-1.0.5.jar) |
 
 ---
@@ -133,7 +133,7 @@ To advance between eras, craft the **Progression Terminal**, insert the required
 ### Fabric Installation
 1. Install **Fabric Loader** ($\ge 0.19.3$) for Minecraft `1.21.x` / `26.1.2`.
 2. Download the latest **Fabric API**.
-3. Place [`releases/exerion-1.0.4.jar`](releases/exerion-1.0.4.jar) into your `.minecraft/mods/` directory.
+3. Place [`releases/exerion-1.0.5.jar`](releases/exerion-1.0.5.jar) into your `.minecraft/mods/` directory.
 
 ### NeoForge Installation
 1. Install **NeoForge** ($\ge 21.11.3$) for Minecraft `1.21.x` / `26.1.2`.

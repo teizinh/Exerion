@@ -34,12 +34,16 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 25
+    options.encoding = 'UTF-8'
+    // Compile and target Java 21 bytecode (major version 65)
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 java {
     withSourcesJar()
-    // Force Java 25 toolchain
+    // A Java 25+ compiler is required because Minecraft 26.1.2 dependencies use Java 25 bytecode (version 69.0),
+    // while sourceCompatibility and targetCompatibility ensure the output runs on Java 21.
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
     }

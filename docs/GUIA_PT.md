@@ -74,8 +74,8 @@ flowchart TD
 
 ## 💻 Instalação
 
-1. Certifica-te de que tens o **Minecraft 1.21.x** com **Java 21/25**.
+1. Certifica-te de que tens o **Minecraft 1.21.x** com **Java 21** ou superior.
 2. Descarrega o mod correspondente na pasta `releases/`:
-   - Para Fabric: `exerion-1.0.4.jar` (requer Fabric Loader $\ge 0.19.3$ e Fabric API).
-   - Para NeoForge: `exerion-neoforge-1.0.4.jar` (requer NeoForge $\ge 21.11.3$).
+   - Para Fabric: `exerion-1.0.5.jar` (requer Fabric Loader $\ge 0.19.3$ e Fabric API).
+   - Para NeoForge: `exerion-neoforge-1.0.5.jar` (requer NeoForge $\ge 21.11.3$).
 3. Coloca o ficheiro na pasta `.minecraft/mods/` e inicia o jogo!
