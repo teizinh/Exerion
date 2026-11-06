@@ -63,6 +63,16 @@ flowchart TD
 
 ## 🧰 Ferramentas e Equipamentos Especiais
 
+- **Canivete Suíço Exerion (*Swiss Army Knife / Omni-Tool*):** A multi-ferramenta definitiva que dá para tudo!
+  - **Mineração Universal:** Mina instantaneamente pedras, minérios, madeira, terra, cascalho e folhas com drops 100% garantidos (Picareta + Machado + Pá + Enxada).
+  - **Chave Inglesa Integrada:** Roda máquinas do Exerion com o botão direito e desmonta máquinas mantendo energia e inventário com Shift + Botão Direito.
+  - **Alternância de 4 Modos:** Faz Shift + Botão Direito no ar para alternar entre os modos:
+    1. `Universal` (Mineração + Chave Inglesa)
+    2. `Mineração 3x3` (Escavação de túneis e veios em cubo de 3x3 blocos)
+    3. `Chave Inglesa Exclusiva` (Para manutenção sem quebrar blocos acidentalmente)
+    4. `Diagnóstico & Scanner` (Inspeciona Eras, Energia EU e Torque FM dos blocos)
+  - **Combate:** Causa +11 de dano de ataque elétrico com faíscas e som crítico.
+  - **Recarregável:** Recarrega na BatBox, Gerador Elétrico, Turbina a Vapor ou no Peitoral Elétrico.
 - **Chave Inglesa (*Wrench*):** Clica com o botão direito para rodar máquinas; **Shift + Botão Direito para remover instantaneamente qualquer máquina mantendo todo o seu inventário e energia intactos**!
 - **Botas de Vapor (*Steam Boots*):** Anulam completamente qualquer dano de queda e permitem saltos com impulso pneumático.
 - **Capacete Lógico (*Logic Helmet*):** Visão noturna permanente e visor tático no HUD.

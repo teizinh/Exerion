@@ -106,6 +106,7 @@ public class EraProgressionRegistry {
         EraProgressionRegistry.registerItemEra(ModItems.EXERION_PLATE, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerItemEra(ModItems.EXERION_ROD, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerItemEra(ModItems.CIRCUIT_BOARD, TechnologyEra.INDUSTRIAL);
+        EraProgressionRegistry.registerItemEra(ModItems.SWISS_ARMY_KNIFE, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerItemEra(ModItems.ERA_SCANNER, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerBlockEra(ModBlocks.EXERION_BLOCK, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerBlockEra(ModBlocks.ELECTRIC_GENERATOR, TechnologyEra.INDUSTRIAL);

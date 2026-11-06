@@ -41,6 +41,7 @@ public class ModItems {
     public static final Item ERA_SCANNER = ModItems.registerCustomItem("era_scanner", EraScannerItem::new, new Item.Properties().durability(100).stacksTo(1));
     public static final Item ELECTRIC_MINING_DRILL = ModItems.registerCustomItem("electric_mining_drill", ElectricMiningDrillItem::new, new Item.Properties().durability(500).stacksTo(1));
     public static final Item PLASMA_SWORD = ModItems.registerCustomItem("plasma_sword", PlasmaSwordItem::new, new Item.Properties().durability(1000).stacksTo(1));
+    public static final Item SWISS_ARMY_KNIFE = ModItems.registerCustomItem("swiss_army_knife", SwissArmyKnifeItem::new, new Item.Properties().durability(2500).stacksTo(1));
     public static final Item LOGIC_CHIP = ModItems.registerItem("logic_chip", new Item.Properties());
     public static final Item CARBON_PLATE = ModItems.registerItem("carbon_plate", new Item.Properties());
     public static final Item SPEED_UPGRADE = ModItems.registerItem("speed_upgrade", new Item.Properties());

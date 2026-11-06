@@ -19,17 +19,14 @@
   "era.exerion.quantum.desc": "Master the fabric of reality.",
   "era.exerion.cosmic": "Cosmic Era",
   "era.exerion.cosmic.desc": "Reach the pinnacle of technology.",
-
   "message.exerion.era_locked.block_break": "[Exerion] You cannot break this block. Requires %s!",
   "message.exerion.era_locked.block_use": "[Exerion] You cannot interact with this block. Requires %s!",
   "message.exerion.era_locked.item_use": "[Exerion] You cannot use this item. Requires %s!",
   "message.exerion.era_unlocked": "[Exerion] You have advanced to the %s!",
-  
   "message.exerion.scanner_no_charge": "[Scanner] No charge! Recharge it in a Steam Turbine.",
   "message.exerion.scanner.block_info": "[Scanner] Block: %s",
   "message.exerion.scanner.era_info": "[Scanner] Required Era: %s",
   "message.exerion.scanner.current_era": "[Scanner] Current Technological Level: %s",
-
   "gui.exerion.guidebook.title": "Exerion Guidebook",
   "gui.exerion.guide.tab.intro": "EXERION GUIDE: INTRODUCTION",
   "gui.exerion.guide.intro.welcome": "Welcome to the Exerion Industrial Guide!",
@@ -39,7 +36,6 @@
   "gui.exerion.guide.intro.step2": "2. Insert them into the Progression Terminal.",
   "gui.exerion.guide.intro.step3": "3. Click 'Advance Era' to evolve.",
   "gui.exerion.guide.intro.sandbox": "Sandbox: Machines are free to use once unlocked!",
-  
   "gui.exerion.guide.iron.gear_press": "Gear Press",
   "gui.exerion.guide.iron.gear_press.desc": "Presses ingots into plates and gears. Requires mechanical rotational force (from a Hand Crank, Water Wheel, or Steam Engine) applied to its shaft. The pressure will double the efficiency of plate production compared to a crafting table.",
   "gui.exerion.guide.iron.crusher": "Manual Crusher",
@@ -56,14 +52,12 @@
   "gui.exerion.guide.ind.elec_crusher.desc": "An upgraded, electrified version of the Manual Crusher. Processes items 5x faster and can be overclocked with Speed Upgrades. Consumes 2 EU/t per operation.",
   "gui.exerion.guide.adv.solar": "Steel Solar Panel",
   "gui.exerion.guide.adv.solar.desc": "Generates clean, renewable energy during the daytime. Must have a clear line of sight to the sky. Produces 10 EU/t and is completely silent. Cannot operate during thunderstorms.",
-
   "block.exerion.shaft": "Mechanical Shaft",
   "item.exerion.shaft": "Mechanical Shaft",
   "block.exerion.hand_crank": "Hand Crank",
   "item.exerion.hand_crank": "Hand Crank",
   "block.exerion.water_wheel": "Water Wheel",
   "item.exerion.water_wheel": "Water Wheel",
-  
   "block.exerion.exerion_casing": "Exerion Casing",
   "block.exerion.exerion_block": "Exerion Block",
   "block.exerion.exerion_ore": "Exerion Ore",
@@ -96,7 +90,6 @@
   "block.exerion.exerion_solar_panel": "Exerion Solar Panel",
   "block.exerion.mechanical_chute": "Mechanical Chute",
   "block.exerion.pump": "Pump",
-  
   "container.exerion.electric_generator": "Electric Generator",
   "container.exerion.batbox": "BatBox",
   "container.exerion.electric_furnace": "Electric Furnace",
@@ -110,7 +103,6 @@
   "container.exerion.steam_turbine": "Steam Turbine",
   "container.exerion.crusher": "Crusher",
   "container.exerion.mining_laser": "Mining Laser",
-  
   "item.exerion.exerion_core": "Exerion Core",
   "item.exerion.raw_exerion": "Raw Exerion",
   "item.exerion.exerion_ingot": "Exerion Ingot",
@@ -140,7 +132,6 @@
   "item.exerion.electric_plate": "Electric Chestplate",
   "item.exerion.logic_helmet": "Logic Helmet",
   "item.exerion.exerion_guide_book": "Exerion Guidebook",
-
   "gui.exerion.guide.stone.raw": "Raw Exerion",
   "gui.exerion.guide.stone.raw.desc": "Mined deep underground. This raw mineral hums with latent energy. It forms the foundation of all Exerion technologies.",
   "gui.exerion.guide.stone.core": "Exerion Core",
@@ -159,7 +150,6 @@
   "gui.exerion.guide.quant.chest.desc": "Transmits items across dimensions instantly using quantum entanglement on specific frequency bands.",
   "gui.exerion.guide.cosm.laser": "Mining Laser",
   "gui.exerion.guide.cosm.laser.desc": "A cosmic-level excavation tool. Obliterates massive areas of terrain in seconds but consumes astronomical amounts of energy.",
-
   "item.exerion.exerion_casing": "Exerion Casing",
   "item.exerion.exerion_block": "Exerion Block",
   "item.exerion.exerion_ore": "Exerion Ore",
@@ -191,5 +181,6 @@
   "item.exerion.steel_solar_panel": "Steel Solar Panel",
   "item.exerion.exerion_solar_panel": "Exerion Solar Panel",
   "item.exerion.mechanical_chute": "Mechanical Chute",
-  "item.exerion.pump": "Pump"
+  "item.exerion.pump": "Pump",
+  "item.exerion.swiss_army_knife": "Navaja Suiza Exerion"
 }

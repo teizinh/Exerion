@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WSD",
+    "PCP",
+    " R "
+  ],
+  "key": {
+    "W": "exerion:wrench",
+    "S": "exerion:era_scanner",
+    "D": "exerion:electric_mining_drill",
+    "P": "exerion:exerion_plate",
+    "C": "exerion:circuit_board",
+    "R": "exerion:exerion_rod"
+  },
+  "result": {
+    "id": "exerion:swiss_army_knife",
+    "count": 1
+  }
+}
