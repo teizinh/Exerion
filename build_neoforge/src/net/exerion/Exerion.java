@@ -90,7 +90,7 @@ public class Exerion {
     public static final Logger LOGGER = LoggerFactory.getLogger((String)"exerion");
 
     public Exerion(IEventBus modEventBus) {
-        LOGGER.info("Initializing Exerion Mod for NeoForge (v1.0.5 safe registry)...");
+        LOGGER.info("Initializing Exerion Mod for NeoForge (v1.0.6 safe registry)...");
         modEventBus.addListener(RegisterEvent.class, this::onRegister);
         modEventBus.addListener(RegisterPayloadHandlersEvent.class, ExerionNetwork::registerPayloads);
         ModAttachments.registerAttachments(modEventBus);

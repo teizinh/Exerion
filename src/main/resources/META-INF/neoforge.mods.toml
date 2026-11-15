@@ -4,7 +4,7 @@ license = "MIT"
 
 [[mods]]
 modId = "exerion"
-version = "1.0.5"
+version = "1.0.6"
 displayName = "Exerion Progression"
 authors = "Salvador"
 description = '''Exerion Progression mod with technological eras, machines, kinetic power, electricity, and custom technology progression.'''
