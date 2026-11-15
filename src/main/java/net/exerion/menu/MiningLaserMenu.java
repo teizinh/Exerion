@@ -29,7 +29,7 @@ extends AbstractContainerMenu {
         this.addSlot(new Slot(container, 0, 80, 45) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(ModItems.SPEED_UPGRADE);
+                return stack.getItem() == ModItems.SPEED_UPGRADE;
             }
         });
         for (int row = 0; row < 3; ++row) {
@@ -73,7 +73,7 @@ extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(slotStack, 1, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (slotStack.is(ModItems.SPEED_UPGRADE)) {
+            } else if (slotStack.getItem() == ModItems.SPEED_UPGRADE) {
                 if (!this.moveItemStackTo(slotStack, 0, 1, false)) {
                     return ItemStack.EMPTY;
                 }

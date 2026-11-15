@@ -50,7 +50,7 @@ extends AbstractContainerMenu {
         this.addSlot(new Slot(this, container, 2, 152, 17){
 
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(ModItems.SPEED_UPGRADE) || stack.is(ModItems.EFFICIENCY_UPGRADE);
+                return stack.getItem() == ModItems.SPEED_UPGRADE || stack.getItem() == ModItems.EFFICIENCY_UPGRADE;
             }
         });
         for (int row = 0; row < 3; ++row) {
@@ -95,7 +95,7 @@ extends AbstractContainerMenu {
         if (slot.hasItem()) {
             ItemStack slotStack = slot.getItem();
             result = slotStack.copy();
-            if (index < 3 ? !this.moveItemStackTo(slotStack, 3, this.slots.size(), true) : (slotStack.is(ModItems.SPEED_UPGRADE) || slotStack.is(ModItems.EFFICIENCY_UPGRADE) ? !this.moveItemStackTo(slotStack, 2, 3, false) && !this.moveItemStackTo(slotStack, 0, 1, false) : !this.moveItemStackTo(slotStack, 0, 1, false))) {
+            if (index < 3 ? !this.moveItemStackTo(slotStack, 3, this.slots.size(), true) : (slotStack.getItem() == ModItems.SPEED_UPGRADE || slotStack.getItem() == ModItems.EFFICIENCY_UPGRADE ? !this.moveItemStackTo(slotStack, 2, 3, false) && !this.moveItemStackTo(slotStack, 0, 1, false) : !this.moveItemStackTo(slotStack, 0, 1, false))) {
                 return ItemStack.EMPTY;
             }
             if (slotStack.isEmpty()) {

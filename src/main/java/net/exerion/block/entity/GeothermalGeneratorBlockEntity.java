@@ -130,13 +130,13 @@ IEnergyStorage {
             }
             ItemStack inputSlot = this.inventory.getItem(0);
             ItemStack outputSlot = this.inventory.getItem(1);
-            if (inputSlot.is(Items.LAVA_BUCKET) && this.lavaBuffer <= 3000) {
+            if (inputSlot.getItem() == Items.LAVA_BUCKET && this.lavaBuffer <= 3000) {
                 if (outputSlot.isEmpty()) {
                     this.inventory.setItem(1, new ItemStack((ItemLike)Items.BUCKET, 1));
                     inputSlot.shrink(1);
                     this.lavaBuffer += 1000;
                     this.setChanged();
-                } else if (outputSlot.is(Items.BUCKET) && outputSlot.getCount() < outputSlot.getMaxStackSize()) {
+                } else if (outputSlot.getItem() == Items.BUCKET && outputSlot.getCount() < outputSlot.getMaxStackSize()) {
                     outputSlot.grow(1);
                     inputSlot.shrink(1);
                     this.lavaBuffer += 1000;

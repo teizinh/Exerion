@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:paper",
+    "minecraft:blue_dye"
+  ],
+  "result": {
+    "id": "exerion:gear_blueprint",
+    "count": 1
+  }
+}

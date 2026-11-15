@@ -84,7 +84,7 @@ IFMConsumer {
 
     public int getMaxCrushTime() {
         ItemStack upgrade = this.inventory.getItem(2);
-        if (upgrade.is(ModItems.SPEED_UPGRADE)) {
+        if (upgrade.getItem() == ModItems.SPEED_UPGRADE) {
             return 40;
         }
         return 100;
@@ -152,25 +152,25 @@ IFMConsumer {
         if (input.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        if (input.is(Items.RAW_IRON)) {
+        if (input.getItem() == Items.RAW_IRON) {
             return new ItemStack((ItemLike)ModItems.IRON_DUST, 2);
         }
-        if (input.is(Items.RAW_COPPER)) {
+        if (input.getItem() == Items.RAW_COPPER) {
             return new ItemStack((ItemLike)ModItems.COPPER_DUST, 2);
         }
-        if (input.is(Items.IRON_INGOT)) {
+        if (input.getItem() == Items.IRON_INGOT) {
             return new ItemStack((ItemLike)ModItems.IRON_DUST);
         }
-        if (input.is(Items.COPPER_INGOT)) {
+        if (input.getItem() == Items.COPPER_INGOT) {
             return new ItemStack((ItemLike)ModItems.COPPER_DUST);
         }
-        if (input.is(Items.COAL)) {
+        if (input.getItem() == Items.COAL) {
             return new ItemStack((ItemLike)ModItems.COAL_DUST);
         }
-        if (input.is(Items.IRON_ORE) || input.is(Items.DEEPSLATE_IRON_ORE)) {
+        if (input.getItem() == Items.IRON_ORE || input.getItem() == Items.DEEPSLATE_IRON_ORE) {
             return new ItemStack((ItemLike)Items.RAW_IRON, 2);
         }
-        if (input.is(Items.COPPER_ORE) || input.is(Items.DEEPSLATE_COPPER_ORE)) {
+        if (input.getItem() == Items.COPPER_ORE || input.getItem() == Items.DEEPSLATE_COPPER_ORE) {
             return new ItemStack((ItemLike)Items.RAW_COPPER, 2);
         }
         if (input.getItem() == Item.byBlock((Block)ModBlocks.EXERION_ORE) || input.getItem() == Item.byBlock((Block)ModBlocks.DEEPSLATE_EXERION_ORE)) {
@@ -183,7 +183,7 @@ IFMConsumer {
         if (outputSlot.isEmpty()) {
             return true;
         }
-        if (!outputSlot.is(result.getItem())) {
+        if (outputSlot.getItem() != result.getItem()) {
             return false;
         }
         return outputSlot.getCount() + result.getCount() <= outputSlot.getMaxStackSize();

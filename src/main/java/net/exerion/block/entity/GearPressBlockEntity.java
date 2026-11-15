@@ -85,7 +85,7 @@ IFMConsumer {
 
     public int getMaxPressTime() {
         ItemStack upgrade = this.inventory.getItem(2);
-        if (upgrade.is(ModItems.SPEED_UPGRADE)) {
+        if (upgrade.getItem() == ModItems.SPEED_UPGRADE) {
             return 40;
         }
         return 100;
@@ -166,16 +166,16 @@ IFMConsumer {
         if (input.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        if (input.is(ModItems.EXERION_INGOT)) {
+        if (input.getItem() == ModItems.EXERION_INGOT) {
             return new ItemStack((ItemLike)ModItems.EXERION_PLATE);
         }
-        if (input.is(Items.IRON_INGOT)) {
+        if (input.getItem() == Items.IRON_INGOT) {
             return new ItemStack((ItemLike)ModItems.IRON_GEAR);
         }
-        if (input.is(Items.COPPER_INGOT)) {
+        if (input.getItem() == Items.COPPER_INGOT) {
             return new ItemStack((ItemLike)ModItems.COPPER_GEAR);
         }
-        if (input.is(ModItems.EXERION_PLATE)) {
+        if (input.getItem() == ModItems.EXERION_PLATE) {
             return new ItemStack((ItemLike)ModItems.EXERION_GEAR);
         }
         return ItemStack.EMPTY;
@@ -185,7 +185,7 @@ IFMConsumer {
         if (outputSlot.isEmpty()) {
             return true;
         }
-        if (!outputSlot.is(result.getItem())) {
+        if (outputSlot.getItem() != result.getItem()) {
             return false;
         }
         return outputSlot.getCount() + result.getCount() <= outputSlot.getMaxStackSize();

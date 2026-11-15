@@ -147,11 +147,11 @@ IEnergyStorage {
         if (output.isEmpty()) {
             return true;
         }
-        return output.is(recipeResult.getItem()) && output.getCount() + recipeResult.getCount() <= output.getMaxStackSize();
+        return output.getItem() == recipeResult.getItem() && output.getCount() + recipeResult.getCount() <= output.getMaxStackSize();
     }
 
     private boolean matchRecipe(ItemStack inputA, ItemStack inputB, ItemStack itemA, ItemStack itemB) {
-        return inputA.is(itemA.getItem()) && inputB.is(itemB.getItem()) || inputA.is(itemB.getItem()) && inputB.is(itemA.getItem());
+        return inputA.getItem() == itemA.getItem() && inputB.getItem() == itemB.getItem() || inputA.getItem() == itemB.getItem() && inputB.getItem() == itemA.getItem();
     }
 
     private ItemStack getRecipeResult(ItemStack inputA, ItemStack inputB) {

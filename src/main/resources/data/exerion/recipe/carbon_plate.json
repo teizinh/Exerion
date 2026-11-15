@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": "exerion:coal_dust"
+  },
+  "result": {
+    "id": "exerion:carbon_plate",
+    "count": 1
+  }
+}

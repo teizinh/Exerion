@@ -114,7 +114,7 @@ implements MenuProvider {
             int totalFound = 0;
             for (int i = 0; i < this.inventory.getContainerSize(); ++i) {
                 ItemStack slot = this.inventory.getItem(i);
-                if (!slot.is(req.getItem())) continue;
+                if (slot.getItem() != req.getItem()) continue;
                 totalFound += slot.getCount();
             }
             if (totalFound >= req.getCount()) continue;
@@ -128,7 +128,7 @@ implements MenuProvider {
             int remaining = req.getCount();
             for (int i = 0; i < this.inventory.getContainerSize() && remaining > 0; ++i) {
                 ItemStack slot = this.inventory.getItem(i);
-                if (!slot.is(req.getItem())) continue;
+                if (slot.getItem() != req.getItem()) continue;
                 int take = Math.min(remaining, slot.getCount());
                 slot.shrink(take);
                 remaining -= take;

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "RGR",
+    "CCC"
+  ],
+  "key": {
+    "C": "minecraft:copper_ingot",
+    "G": "minecraft:gold_ingot",
+    "R": "minecraft:redstone"
+  },
+  "result": {
+    "id": "exerion:circuit_board",
+    "count": 1
+  }
+}

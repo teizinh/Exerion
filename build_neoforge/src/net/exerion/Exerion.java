@@ -148,7 +148,7 @@ public class Exerion {
             ItemStack boots;
             ItemStack plate;
             ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
-            if (!helmet.isEmpty() && helmet.is(ModItems.LOGIC_HELMET)) {
+            if (!helmet.isEmpty() && helmet.getItem() == ModItems.LOGIC_HELMET) {
                 if (!helmet.has(DataComponents.CUSTOM_DATA) || !((CustomData)helmet.get(DataComponents.CUSTOM_DATA)).copyTag().contains("exerion_init")) {
                     helmet.setDamageValue(helmet.getMaxDamage());
                     CompoundTag tag = helmet.has(DataComponents.CUSTOM_DATA) ? ((CustomData)helmet.get(DataComponents.CUSTOM_DATA)).copyTag() : new CompoundTag();
@@ -181,7 +181,7 @@ public class Exerion {
                     }
                 }
             }
-            if (!(plate = player.getItemBySlot(EquipmentSlot.CHEST)).isEmpty() && plate.is(ModItems.ELECTRIC_PLATE)) {
+            if (!(plate = player.getItemBySlot(EquipmentSlot.CHEST)).isEmpty() && plate.getItem() == ModItems.ELECTRIC_PLATE) {
                 if (!plate.has(DataComponents.CUSTOM_DATA) || !((CustomData)plate.get(DataComponents.CUSTOM_DATA)).copyTag().contains("exerion_init")) {
                     plate.setDamageValue(plate.getMaxDamage());
                     CompoundTag tag = plate.has(DataComponents.CUSTOM_DATA) ? ((CustomData)plate.get(DataComponents.CUSTOM_DATA)).copyTag() : new CompoundTag();
@@ -197,7 +197,7 @@ public class Exerion {
                     if (player.tickCount % 2 == 0) {
                         for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
                             ItemStack invStack = player.getInventory().getItem(i);
-                            if (invStack.isEmpty() || invStack == plate || !invStack.is(ModItems.ERA_SCANNER) && !invStack.is(ModItems.ELECTRIC_MINING_DRILL) || invStack.getDamageValue() <= 0) continue;
+                            if (invStack.isEmpty() || invStack == plate || invStack.getItem() != ModItems.ERA_SCANNER && invStack.getItem() != ModItems.ELECTRIC_MINING_DRILL || invStack.getDamageValue() <= 0) continue;
                             invStack.setDamageValue(invStack.getDamageValue() - 1);
                             plate.setDamageValue(Math.min(plate.getMaxDamage(), plate.getDamageValue() + 1));
                             break;
@@ -205,7 +205,7 @@ public class Exerion {
                     }
                 }
             }
-            if ((boots = player.getItemBySlot(EquipmentSlot.FEET)).isEmpty() || !boots.is(ModItems.STEAM_BOOTS)) continue;
+            if ((boots = player.getItemBySlot(EquipmentSlot.FEET)).isEmpty() || boots.getItem() != ModItems.STEAM_BOOTS) continue;
             if (!boots.has(DataComponents.CUSTOM_DATA) || !((CustomData)boots.get(DataComponents.CUSTOM_DATA)).copyTag().contains("exerion_init")) {
                 boots.setDamageValue(boots.getMaxDamage());
                 CompoundTag tag = boots.has(DataComponents.CUSTOM_DATA) ? ((CustomData)boots.get(DataComponents.CUSTOM_DATA)).copyTag() : new CompoundTag();

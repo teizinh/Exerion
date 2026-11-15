@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EE"
+  ],
+  "key": {
+    "E": "exerion:exerion_ingot"
+  },
+  "result": {
+    "id": "exerion:exerion_plate",
+    "count": 1
+  }
+}

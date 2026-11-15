@@ -146,23 +146,23 @@ IEnergyStorage {
         if (outputSlot.isEmpty()) {
             return true;
         }
-        return outputSlot.is(result.getItem()) && outputSlot.getCount() + result.getCount() <= outputSlot.getMaxStackSize();
+        return outputSlot.getItem() == result.getItem() && outputSlot.getCount() + result.getCount() <= outputSlot.getMaxStackSize();
     }
 
     private ItemStack getRecipeResult(ItemStack input, Level level) {
-        if (input.is(ModItems.IRON_DUST)) {
+        if (input.getItem() == ModItems.IRON_DUST) {
             return new ItemStack((ItemLike)Items.IRON_INGOT);
         }
-        if (input.is(ModItems.COPPER_DUST)) {
+        if (input.getItem() == ModItems.COPPER_DUST) {
             return new ItemStack((ItemLike)Items.COPPER_INGOT);
         }
-        if (input.is(ModItems.RAW_EXERION)) {
+        if (input.getItem() == ModItems.RAW_EXERION) {
             return new ItemStack((ItemLike)ModItems.EXERION_INGOT);
         }
-        if (input.is(Items.RAW_IRON)) {
+        if (input.getItem() == Items.RAW_IRON) {
             return new ItemStack((ItemLike)Items.IRON_INGOT);
         }
-        if (input.is(Items.RAW_COPPER)) {
+        if (input.getItem() == Items.RAW_COPPER) {
             return new ItemStack((ItemLike)Items.COPPER_INGOT);
         }
         return ItemStack.EMPTY;

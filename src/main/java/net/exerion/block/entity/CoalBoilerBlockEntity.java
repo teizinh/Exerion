@@ -107,7 +107,7 @@ implements MenuProvider {
             if (this.burnTime == 0) {
                 ItemStack fuelSlot = this.inventory.getItem(0);
                 ItemStack waterSlot = this.inventory.getItem(1);
-                if (!fuelSlot.isEmpty() && (fuelSlot.is(Items.COAL) || fuelSlot.is(Items.CHARCOAL)) && !waterSlot.isEmpty() && waterSlot.is(Items.WATER_BUCKET)) {
+                if (!fuelSlot.isEmpty() && (fuelSlot.getItem() == Items.COAL || fuelSlot.getItem() == Items.CHARCOAL) && !waterSlot.isEmpty() && waterSlot.getItem() == Items.WATER_BUCKET) {
                     this.burnTime = 200;
                     this.maxBurnTime = 200;
                     fuelSlot.shrink(1);
@@ -123,7 +123,7 @@ implements MenuProvider {
                     if (outputSlot.isEmpty()) {
                         this.inventory.setItem(2, new ItemStack((ItemLike)ModItems.STEAM_CRYSTAL));
                         this.setChanged();
-                    } else if (outputSlot.is(ModItems.STEAM_CRYSTAL) && outputSlot.getCount() < outputSlot.getMaxStackSize()) {
+                    } else if (outputSlot.getItem() == ModItems.STEAM_CRYSTAL && outputSlot.getCount() < outputSlot.getMaxStackSize()) {
                         outputSlot.grow(1);
                         this.setChanged();
                     }

@@ -150,42 +150,42 @@ IEnergyStorage {
         if (output.isEmpty()) {
             return true;
         }
-        return output.is(recipeResult.getItem()) && output.getCount() + recipeResult.getCount() <= output.getMaxStackSize();
+        return output.getItem() == recipeResult.getItem() && output.getCount() + recipeResult.getCount() <= output.getMaxStackSize();
     }
 
     private ItemStack getRecipeResult(ItemStack input) {
-        if (input.is(ModItems.COAL_DUST)) {
+        if (input.getItem() == ModItems.COAL_DUST) {
             return new ItemStack((ItemLike)ModItems.CARBON_PLATE, 1);
         }
-        if (input.is(Items.IRON_INGOT)) {
+        if (input.getItem() == Items.IRON_INGOT) {
             return new ItemStack((ItemLike)Items.IRON_BLOCK, 1);
         }
-        if (input.is(Items.GOLD_INGOT)) {
+        if (input.getItem() == Items.GOLD_INGOT) {
             return new ItemStack((ItemLike)Items.GOLD_BLOCK, 1);
         }
-        if (input.is(Items.COPPER_INGOT)) {
+        if (input.getItem() == Items.COPPER_INGOT) {
             return new ItemStack((ItemLike)Items.COPPER_BLOCK, 1);
         }
-        if (input.is(Items.DIAMOND)) {
+        if (input.getItem() == Items.DIAMOND) {
             return new ItemStack((ItemLike)Items.DIAMOND_BLOCK, 1);
         }
-        if (input.is(Items.REDSTONE)) {
+        if (input.getItem() == Items.REDSTONE) {
             return new ItemStack((ItemLike)Items.REDSTONE_BLOCK, 1);
         }
-        if (input.is(ModItems.EXERION_INGOT)) {
+        if (input.getItem() == ModItems.EXERION_INGOT) {
             return new ItemStack(ModBlocks.EXERION_BLOCK.asItem(), 1);
         }
-        if (input.is(ModItems.STEEL_INGOT)) {
+        if (input.getItem() == ModItems.STEEL_INGOT) {
             return new ItemStack(ModBlocks.STEEL_BLOCK.asItem(), 1);
         }
         return ItemStack.EMPTY;
     }
 
     private int getRequiredInputCount(ItemStack input) {
-        if (input.is(ModItems.COAL_DUST)) {
+        if (input.getItem() == ModItems.COAL_DUST) {
             return 4;
         }
-        if (input.is(Items.IRON_INGOT) || input.is(Items.GOLD_INGOT) || input.is(Items.COPPER_INGOT) || input.is(Items.DIAMOND) || input.is(Items.REDSTONE) || input.is(ModItems.EXERION_INGOT) || input.is(ModItems.STEEL_INGOT)) {
+        if (input.getItem() == Items.IRON_INGOT || input.getItem() == Items.GOLD_INGOT || input.getItem() == Items.COPPER_INGOT || input.getItem() == Items.DIAMOND || input.getItem() == Items.REDSTONE || input.getItem() == ModItems.EXERION_INGOT || input.getItem() == ModItems.STEEL_INGOT) {
             return 9;
         }
         return 1;

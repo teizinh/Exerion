@@ -63,7 +63,7 @@ implements ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             double motionY;
             ItemStack boots;
-            if (client.player != null && !(boots = client.player.getItemBySlot(EquipmentSlot.FEET)).isEmpty() && boots.is(ModItems.STEAM_BOOTS) && boots.getDamageValue() < boots.getMaxDamage() && (motionY = client.player.getDeltaMovement().y) > 0.4 && motionY < 0.45 && !client.player.onGround() && client.player.tickCount % 5 == 0) {
+            if (client.player != null && !(boots = client.player.getItemBySlot(EquipmentSlot.FEET)).isEmpty() && boots.getItem() == ModItems.STEAM_BOOTS && boots.getDamageValue() < boots.getMaxDamage() && (motionY = client.player.getDeltaMovement().y) > 0.4 && motionY < 0.45 && !client.player.onGround() && client.player.tickCount % 5 == 0) {
                 client.player.setDeltaMovement(client.player.getDeltaMovement().add(0.0, 0.35, 0.0));
                 client.player.level().playSound((Entity)client.player, client.player.getX(), client.player.getY(), client.player.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.4f, 2.0f);
                 boots.setDamageValue(Math.min(boots.getMaxDamage(), boots.getDamageValue() + 2));

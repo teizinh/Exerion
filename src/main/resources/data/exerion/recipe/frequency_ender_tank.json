@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SGS",
+    "OCO",
+    "SGS"
+  ],
+  "key": {
+    "S": "exerion:steel_ingot",
+    "G": "minecraft:glass",
+    "O": "minecraft:obsidian",
+    "C": "minecraft:ender_pearl"
+  },
+  "result": {
+    "id": "exerion:frequency_ender_tank",
+    "count": 1
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "minecraft:flint"
+  ],
+  "result": {
+    "id": "exerion:iron_dust",
+    "count": 1
+  }
+}

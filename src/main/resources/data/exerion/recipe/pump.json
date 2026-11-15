@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SCS",
+    "GBG",
+    "SPS"
+  ],
+  "key": {
+    "S": "exerion:steel_ingot",
+    "C": "exerion:circuit_board",
+    "G": "exerion:iron_gear",
+    "B": "minecraft:bucket",
+    "P": "exerion:shaft"
+  },
+  "result": {
+    "id": "exerion:pump",
+    "count": 1
+  }
+}

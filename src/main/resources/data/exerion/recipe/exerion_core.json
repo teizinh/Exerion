@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " R ",
+    "RCR",
+    " R "
+  ],
+  "key": {
+    "R": "exerion:raw_exerion",
+    "C": "minecraft:cobblestone"
+  },
+  "result": {
+    "id": "exerion:exerion_core",
+    "count": 1
+  }
+}

@@ -100,13 +100,13 @@ IEnergyStorage {
                 return;
             }
             ItemStack dischargeSlot = this.inventory.getItem(1);
-            if (this.energy <= 9750 && !dischargeSlot.isEmpty() && dischargeSlot.is(ModItems.STEAM_CRYSTAL)) {
+            if (this.energy <= 9750 && !dischargeSlot.isEmpty() && dischargeSlot.getItem() == ModItems.STEAM_CRYSTAL) {
                 dischargeSlot.shrink(1);
                 this.energy += 250;
                 this.setChanged();
             }
             ItemStack chargeSlot = this.inventory.getItem(0);
-            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.is(ModItems.ERA_SCANNER) || chargeSlot.is(ModItems.STEAM_BOOTS) || chargeSlot.is(ModItems.ELECTRIC_PLATE) || chargeSlot.is(ModItems.LOGIC_HELMET) || chargeSlot.is(ModItems.ELECTRIC_MINING_DRILL) || chargeSlot.is(ModItems.PLASMA_SWORD)) && (damage = chargeSlot.getDamageValue()) > 0) {
+            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.getItem() == ModItems.ERA_SCANNER || chargeSlot.getItem() == ModItems.STEAM_BOOTS || chargeSlot.getItem() == ModItems.ELECTRIC_PLATE || chargeSlot.getItem() == ModItems.LOGIC_HELMET || chargeSlot.getItem() == ModItems.ELECTRIC_MINING_DRILL || chargeSlot.getItem() == ModItems.PLASMA_SWORD) && (damage = chargeSlot.getDamageValue()) > 0) {
                 int chargeAmount = Math.min(damage, 32);
                 chargeSlot.setDamageValue(damage - chargeAmount);
                 this.energy -= chargeAmount;

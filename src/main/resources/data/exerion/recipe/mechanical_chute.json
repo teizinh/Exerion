@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I I",
+    "ICI",
+    " S "
+  ],
+  "key": {
+    "I": "minecraft:iron_ingot",
+    "C": "minecraft:chest",
+    "S": "exerion:shaft"
+  },
+  "result": {
+    "id": "exerion:mechanical_chute",
+    "count": 1
+  }
+}

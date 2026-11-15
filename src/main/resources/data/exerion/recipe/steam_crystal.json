@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "QRQ",
+    "RBR",
+    "QRQ"
+  ],
+  "key": {
+    "Q": "minecraft:quartz",
+    "R": "minecraft:redstone",
+    "B": "minecraft:water_bucket"
+  },
+  "result": {
+    "id": "exerion:steam_crystal",
+    "count": 2
+  }
+}

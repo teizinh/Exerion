@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RGR",
+    "QCQ",
+    "RGR"
+  ],
+  "key": {
+    "R": "minecraft:redstone",
+    "G": "minecraft:gold_ingot",
+    "Q": "minecraft:quartz",
+    "C": "minecraft:copper_ingot"
+  },
+  "result": {
+    "id": "exerion:logic_chip",
+    "count": 2
+  }
+}

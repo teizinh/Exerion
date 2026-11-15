@@ -132,25 +132,25 @@ IEnergyStorage {
                 this.setChanged();
             }
             if (this.burnTime == 0 && this.energy < 10000 && !(fuelSlot = this.inventory.getItem(0)).isEmpty()) {
-                if (fuelSlot.is(Items.COAL) || fuelSlot.is(Items.CHARCOAL)) {
+                if (fuelSlot.getItem() == Items.COAL || fuelSlot.getItem() == Items.CHARCOAL) {
                     this.burnTime = 100;
                     this.maxBurnTime = 100;
                     this.generationRate = 10;
                     fuelSlot.shrink(1);
                     this.setChanged();
-                } else if (fuelSlot.is(Items.COAL_BLOCK)) {
+                } else if (fuelSlot.getItem() == Items.COAL_BLOCK) {
                     this.burnTime = 900;
                     this.maxBurnTime = 900;
                     this.generationRate = 12;
                     fuelSlot.shrink(1);
                     this.setChanged();
-                } else if (fuelSlot.is(ModItems.STEAM_CRYSTAL)) {
+                } else if (fuelSlot.getItem() == ModItems.STEAM_CRYSTAL) {
                     this.burnTime = 200;
                     this.maxBurnTime = 200;
                     this.generationRate = 20;
                     fuelSlot.shrink(1);
                     this.setChanged();
-                } else if (fuelSlot.is(Items.LAVA_BUCKET)) {
+                } else if (fuelSlot.getItem() == Items.LAVA_BUCKET) {
                     this.burnTime = 400;
                     this.maxBurnTime = 400;
                     this.generationRate = 20;
@@ -159,7 +159,7 @@ IEnergyStorage {
                 }
             }
             ItemStack chargeSlot = this.inventory.getItem(1);
-            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.is(ModItems.ERA_SCANNER) || chargeSlot.is(ModItems.SWISS_ARMY_KNIFE) || chargeSlot.is(ModItems.STEAM_BOOTS) || chargeSlot.is(ModItems.ELECTRIC_PLATE) || chargeSlot.is(ModItems.LOGIC_HELMET) || chargeSlot.is(ModItems.ELECTRIC_MINING_DRILL) || chargeSlot.is(ModItems.PLASMA_SWORD)) && (damage = chargeSlot.getDamageValue()) > 0) {
+            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.getItem() == ModItems.ERA_SCANNER || chargeSlot.getItem() == ModItems.SWISS_ARMY_KNIFE || chargeSlot.getItem() == ModItems.STEAM_BOOTS || chargeSlot.getItem() == ModItems.ELECTRIC_PLATE || chargeSlot.getItem() == ModItems.LOGIC_HELMET || chargeSlot.getItem() == ModItems.ELECTRIC_MINING_DRILL || chargeSlot.getItem() == ModItems.PLASMA_SWORD) && (damage = chargeSlot.getDamageValue()) > 0) {
                 int chargeAmount = Math.min(damage, 2);
                 chargeSlot.setDamageValue(damage - chargeAmount);
                 this.energy -= chargeAmount;

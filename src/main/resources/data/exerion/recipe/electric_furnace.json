@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SCS",
+    "CMC",
+    "SCS"
+  ],
+  "key": {
+    "S": "exerion:steel_ingot",
+    "C": "exerion:circuit_board",
+    "M": "minecraft:furnace"
+  },
+  "result": {
+    "id": "exerion:electric_furnace",
+    "count": 1
+  }
+}

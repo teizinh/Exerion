@@ -44,7 +44,7 @@ extends AbstractContainerMenu {
         this.addSlot(new Slot(this, container, 0, 44, 35){
 
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(Items.LAVA_BUCKET);
+                return stack.getItem() == Items.LAVA_BUCKET;
             }
         });
         this.addSlot(new Slot(this, container, 1, 116, 35){
@@ -99,7 +99,7 @@ extends AbstractContainerMenu {
                 if (!this.moveItemStackTo(slotStack, 2, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (slotStack.is(Items.LAVA_BUCKET)) {
+            } else if (slotStack.getItem() == Items.LAVA_BUCKET) {
                 if (!this.moveItemStackTo(slotStack, 0, 1, false)) {
                     return ItemStack.EMPTY;
                 }

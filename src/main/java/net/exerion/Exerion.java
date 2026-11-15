@@ -92,7 +92,7 @@ public class Exerion implements ModInitializer {
         ServerTickEvents.START_SERVER_TICK.register(server -> ExerionCrashGuard.safeNetwork("ServerTickEvents.START_SERVER_TICK", () -> {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
-                if (!helmet.isEmpty() && helmet.is(ModItems.LOGIC_HELMET)) {
+                if (!helmet.isEmpty() && helmet.getItem() == ModItems.LOGIC_HELMET) {
                     if (!isExerionInitialized(helmet)) {
                         initExerionItem(helmet);
                     }
@@ -124,7 +124,7 @@ public class Exerion implements ModInitializer {
                 }
 
                 ItemStack plate = player.getItemBySlot(EquipmentSlot.CHEST);
-                if (!plate.isEmpty() && plate.is(ModItems.ELECTRIC_PLATE)) {
+                if (!plate.isEmpty() && plate.getItem() == ModItems.ELECTRIC_PLATE) {
                     if (!isExerionInitialized(plate)) {
                         initExerionItem(plate);
                     }
@@ -137,7 +137,7 @@ public class Exerion implements ModInitializer {
                         if (player.tickCount % 2 == 0) {
                             for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
                                 ItemStack invStack = player.getInventory().getItem(i);
-                                if (invStack.isEmpty() || invStack == plate || (!invStack.is(ModItems.ERA_SCANNER) && !invStack.is(ModItems.ELECTRIC_MINING_DRILL)) || invStack.getDamageValue() <= 0) continue;
+                                if (invStack.isEmpty() || invStack == plate || (invStack.getItem() != ModItems.ERA_SCANNER && invStack.getItem() != ModItems.ELECTRIC_MINING_DRILL) || invStack.getDamageValue() <= 0) continue;
                                 invStack.setDamageValue(invStack.getDamageValue() - 1);
                                 plate.setDamageValue(Math.min(plate.getMaxDamage(), plate.getDamageValue() + 1));
                                 break;
@@ -147,7 +147,7 @@ public class Exerion implements ModInitializer {
                 }
 
                 ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
-                if (!boots.isEmpty() && boots.is(ModItems.STEAM_BOOTS)) {
+                if (!boots.isEmpty() && boots.getItem() == ModItems.STEAM_BOOTS) {
                     if (!isExerionInitialized(boots)) {
                         initExerionItem(boots);
                     }

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "E",
+    "E"
+  ],
+  "key": {
+    "E": "exerion:exerion_ingot"
+  },
+  "result": {
+    "id": "exerion:exerion_rod",
+    "count": 4
+  }
+}
