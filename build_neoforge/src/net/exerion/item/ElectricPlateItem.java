@@ -48,7 +48,7 @@ extends Item {
                 if (player.tickCount % 2 == 0 && stack.getDamageValue() < stack.getMaxDamage()) {
                     for (int i = 0; i < player.getInventory().getContainerSize(); ++i) {
                         ItemStack invStack = player.getInventory().getItem(i);
-                        if (invStack.isEmpty() || invStack == stack || invStack.getItem() != ModItems.ERA_SCANNER && invStack.getItem() != ModItems.ELECTRIC_MINING_DRILL && invStack.getItem() != ModItems.PLASMA_SWORD || invStack.getDamageValue() <= 0) continue;
+                        if (invStack.isEmpty() || invStack == stack || invStack.getItem() != ModItems.ERA_SCANNER && invStack.getItem() != ModItems.SWISS_ARMY_KNIFE && invStack.getItem() != ModItems.ELECTRIC_MINING_DRILL && invStack.getItem() != ModItems.PLASMA_SWORD || invStack.getDamageValue() <= 0) continue;
                         invStack.setDamageValue(invStack.getDamageValue() - 1);
                         stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
                         break;

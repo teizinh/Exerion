@@ -32,6 +32,7 @@ public class ModCreativeModeTabs {
         event.register(Registries.CREATIVE_MODE_TAB, helper -> {
             EXERION_GROUP = CreativeModeTab.builder().icon(() -> new ItemStack((ItemLike)ModItems.EXERION_CORE)).title((Component)Component.translatable((String)"itemGroup.exerion.main")).displayItems((params, output) -> {
                 output.accept((ItemLike)ModItems.EXERION_GUIDE_BOOK);
+                output.accept((ItemLike)ModItems.SWISS_ARMY_KNIFE);
                 output.accept((ItemLike)ModItems.WRENCH);
                 output.accept((ItemLike)ModItems.ERA_SCANNER);
                 output.accept((ItemLike)ModItems.ELECTRIC_MINING_DRILL);

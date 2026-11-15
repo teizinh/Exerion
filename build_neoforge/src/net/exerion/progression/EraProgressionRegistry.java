@@ -27,15 +27,15 @@ public class EraProgressionRegistry {
     private static final Map<Identifier, TechnologyEra> BLOCK_ERAS = new HashMap<Identifier, TechnologyEra>();
 
     public static void registerItemEra(Item item, TechnologyEra era) {
-        ITEM_ERAS.put(BuiltInRegistries.ITEM.getKey((Object)item), era);
+        ITEM_ERAS.put(BuiltInRegistries.ITEM.getKey(item), era);
     }
 
     public static void registerBlockEra(Block block, TechnologyEra era) {
-        BLOCK_ERAS.put(BuiltInRegistries.BLOCK.getKey((Object)block), era);
+        BLOCK_ERAS.put(BuiltInRegistries.BLOCK.getKey(block), era);
     }
 
     public static TechnologyEra getRequiredEra(Item item) {
-        Identifier id = BuiltInRegistries.ITEM.getKey((Object)item);
+        Identifier id = BuiltInRegistries.ITEM.getKey(item);
         if (ITEM_ERAS.containsKey(id)) {
             return ITEM_ERAS.get(id);
         }
@@ -43,7 +43,7 @@ public class EraProgressionRegistry {
     }
 
     public static TechnologyEra getRequiredEra(Block block) {
-        Identifier id = BuiltInRegistries.BLOCK.getKey((Object)block);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
         if (BLOCK_ERAS.containsKey(id)) {
             return BLOCK_ERAS.get(id);
         }
@@ -112,6 +112,7 @@ public class EraProgressionRegistry {
         EraProgressionRegistry.registerItemEra(ModItems.EXERION_PLATE, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerItemEra(ModItems.EXERION_ROD, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerItemEra(ModItems.CIRCUIT_BOARD, TechnologyEra.INDUSTRIAL);
+        EraProgressionRegistry.registerItemEra(ModItems.SWISS_ARMY_KNIFE, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerItemEra(ModItems.ERA_SCANNER, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerBlockEra(ModBlocks.EXERION_BLOCK, TechnologyEra.INDUSTRIAL);
         EraProgressionRegistry.registerBlockEra(ModBlocks.ELECTRIC_GENERATOR, TechnologyEra.INDUSTRIAL);

@@ -104,7 +104,7 @@ IEnergyStorage {
                 this.setChanged();
             }
             ItemStack chargeSlot = this.inventory.getItem(1);
-            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.getItem() == ModItems.ERA_SCANNER || chargeSlot.getItem() == ModItems.STEAM_BOOTS || chargeSlot.getItem() == ModItems.ELECTRIC_PLATE || chargeSlot.getItem() == ModItems.LOGIC_HELMET || chargeSlot.getItem() == ModItems.ELECTRIC_MINING_DRILL || chargeSlot.getItem() == ModItems.PLASMA_SWORD) && (damage = chargeSlot.getDamageValue()) > 0) {
+            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.getItem() == ModItems.ERA_SCANNER || chargeSlot.getItem() == ModItems.SWISS_ARMY_KNIFE || chargeSlot.getItem() == ModItems.STEAM_BOOTS || chargeSlot.getItem() == ModItems.ELECTRIC_PLATE || chargeSlot.getItem() == ModItems.LOGIC_HELMET || chargeSlot.getItem() == ModItems.ELECTRIC_MINING_DRILL || chargeSlot.getItem() == ModItems.PLASMA_SWORD) && (damage = chargeSlot.getDamageValue()) > 0) {
                 chargeSlot.setDamageValue(damage - 1);
                 --this.energy;
                 isTurning = true;

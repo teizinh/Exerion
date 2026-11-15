@@ -40,6 +40,7 @@ public class ModItems {
     public static Item ERA_SCANNER;
     public static Item ELECTRIC_MINING_DRILL;
     public static Item PLASMA_SWORD;
+    public static Item SWISS_ARMY_KNIFE;
     public static Item LOGIC_CHIP;
     public static Item CARBON_PLATE;
     public static Item SPEED_UPGRADE;
@@ -86,6 +87,7 @@ public class ModItems {
             ERA_SCANNER = registerCustomItem(helper, "era_scanner", EraScannerItem::new, new Item.Properties().durability(100).stacksTo(1));
             ELECTRIC_MINING_DRILL = registerCustomItem(helper, "electric_mining_drill", ElectricMiningDrillItem::new, new Item.Properties().durability(500).stacksTo(1));
             PLASMA_SWORD = registerCustomItem(helper, "plasma_sword", PlasmaSwordItem::new, new Item.Properties().durability(1000).stacksTo(1));
+            SWISS_ARMY_KNIFE = registerCustomItem(helper, "swiss_army_knife", SwissArmyKnifeItem::new, new Item.Properties().durability(2500).stacksTo(1));
             LOGIC_CHIP = registerItem(helper, "logic_chip", new Item.Properties());
             CARBON_PLATE = registerItem(helper, "carbon_plate", new Item.Properties());
             SPEED_UPGRADE = registerItem(helper, "speed_upgrade", new Item.Properties());
