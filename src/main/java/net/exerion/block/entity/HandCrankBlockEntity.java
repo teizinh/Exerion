@@ -3,6 +3,7 @@ package net.exerion.block.entity;
 import net.exerion.block.HandCrankBlock;
 import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.mechanical.IFMSource;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -75,21 +76,23 @@ implements IFMSource {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide()) {
-            if (((Boolean)state.getValue(HandCrankBlock.CRANKING)).booleanValue()) {
-                this.visualRotationAngle = (float)level.getGameTime() * 4.0f % 360.0f;
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            if (level.isClientSide()) {
+                if (((Boolean)state.getValue(HandCrankBlock.CRANKING)).booleanValue()) {
+                    this.visualRotationAngle = (float)level.getGameTime() * 4.0f % 360.0f;
+                }
+                return;
             }
-            return;
-        }
-        if (this.isBurstMode && this.fmBuffer > 0) {
-            this.fmBuffer = Math.max(0, this.fmBuffer - 1);
-            this.setChanged();
-        }
-        boolean isGenerating = this.isBurstMode ? this.fmBuffer > 0 : level.getGameTime() - this.lastCrankTime <= 2L;
-        boolean wasCranking = (Boolean)state.getValue(HandCrankBlock.CRANKING);
-        if (wasCranking != isGenerating) {
-            level.setBlock(pos, (BlockState)state.setValue(HandCrankBlock.CRANKING, isGenerating), 3);
-        }
+            if (this.isBurstMode && this.fmBuffer > 0) {
+                this.fmBuffer = Math.max(0, this.fmBuffer - 1);
+                this.setChanged();
+            }
+            boolean isGenerating = this.isBurstMode ? this.fmBuffer > 0 : level.getGameTime() - this.lastCrankTime <= 2L;
+            boolean wasCranking = (Boolean)state.getValue(HandCrankBlock.CRANKING);
+            if (wasCranking != isGenerating) {
+                level.setBlock(pos, (BlockState)state.setValue(HandCrankBlock.CRANKING, isGenerating), 3);
+            }
+        });
     }
 
     protected void saveAdditional(ValueOutput output) {

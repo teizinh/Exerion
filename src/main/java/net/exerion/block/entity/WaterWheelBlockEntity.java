@@ -3,6 +3,7 @@ package net.exerion.block.entity;
 import net.exerion.block.WaterWheelBlock;
 import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.mechanical.IFMSource;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -46,35 +47,37 @@ implements IFMSource {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide()) {
-            if (((Boolean)state.getValue(WaterWheelBlock.SPINNING)).booleanValue()) {
-                this.visualRotationAngle = (float)level.getGameTime() * ROTATION_SPEED % 360.0f;
-            }
-            return;
-        }
-        ++this.checkTimer;
-        if (this.checkTimer >= CHECK_INTERVAL) {
-            this.checkTimer = 0;
-            boolean waterFound = false;
-            for (Direction dir : DIRECTIONS) {
-                BlockPos neighborPos = pos.relative(dir);
-                if (!level.getFluidState(neighborPos).is(FluidTags.WATER)) continue;
-                waterFound = true;
-                break;
-            }
-            if (this.hasWater != waterFound) {
-                this.hasWater = waterFound;
-                this.setChanged();
-                boolean currentSpin = (Boolean)state.getValue(WaterWheelBlock.SPINNING);
-                if (currentSpin != this.hasWater) {
-                    level.setBlock(pos, (BlockState)state.setValue(WaterWheelBlock.SPINNING, this.hasWater), 3);
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            if (level.isClientSide()) {
+                if (((Boolean)state.getValue(WaterWheelBlock.SPINNING)).booleanValue()) {
+                    this.visualRotationAngle = (float)level.getGameTime() * ROTATION_SPEED % 360.0f;
                 }
-                if (this.hasWater && level instanceof ServerLevel) {
-                    ServerLevel serverLevel = (ServerLevel)level;
-                    serverLevel.sendParticles((ParticleOptions)ParticleTypes.SPLASH, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, 8, 0.4, 0.2, 0.4, 0.0);
+                return;
+            }
+            ++this.checkTimer;
+            if (this.checkTimer >= CHECK_INTERVAL) {
+                this.checkTimer = 0;
+                boolean waterFound = false;
+                for (Direction dir : DIRECTIONS) {
+                    BlockPos neighborPos = pos.relative(dir);
+                    if (!level.getFluidState(neighborPos).is(FluidTags.WATER)) continue;
+                    waterFound = true;
+                    break;
+                }
+                if (this.hasWater != waterFound) {
+                    this.hasWater = waterFound;
+                    this.setChanged();
+                    boolean currentSpin = (Boolean)state.getValue(WaterWheelBlock.SPINNING);
+                    if (currentSpin != this.hasWater) {
+                        level.setBlock(pos, (BlockState)state.setValue(WaterWheelBlock.SPINNING, this.hasWater), 3);
+                    }
+                    if (this.hasWater && level instanceof ServerLevel) {
+                        ServerLevel serverLevel = (ServerLevel)level;
+                        serverLevel.sendParticles((ParticleOptions)ParticleTypes.SPLASH, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, 8, 0.4, 0.2, 0.4, 0.0);
+                    }
                 }
             }
-        }
+        });
     }
 
     protected void saveAdditional(ValueOutput output) {

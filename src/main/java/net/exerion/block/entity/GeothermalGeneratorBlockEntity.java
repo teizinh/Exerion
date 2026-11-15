@@ -3,6 +3,7 @@ package net.exerion.block.entity;
 import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
 import net.exerion.menu.GeothermalGeneratorMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
@@ -122,48 +123,50 @@ IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        boolean isWorking;
-        if (level.isClientSide()) {
-            return;
-        }
-        ItemStack inputSlot = this.inventory.getItem(0);
-        ItemStack outputSlot = this.inventory.getItem(1);
-        if (inputSlot.is(Items.LAVA_BUCKET) && this.lavaBuffer <= 3000) {
-            if (outputSlot.isEmpty()) {
-                this.inventory.setItem(1, new ItemStack((ItemLike)Items.BUCKET, 1));
-                inputSlot.shrink(1);
-                this.lavaBuffer += 1000;
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            boolean isWorking;
+            if (level.isClientSide()) {
+                return;
+            }
+            ItemStack inputSlot = this.inventory.getItem(0);
+            ItemStack outputSlot = this.inventory.getItem(1);
+            if (inputSlot.is(Items.LAVA_BUCKET) && this.lavaBuffer <= 3000) {
+                if (outputSlot.isEmpty()) {
+                    this.inventory.setItem(1, new ItemStack((ItemLike)Items.BUCKET, 1));
+                    inputSlot.shrink(1);
+                    this.lavaBuffer += 1000;
+                    this.setChanged();
+                } else if (outputSlot.is(Items.BUCKET) && outputSlot.getCount() < outputSlot.getMaxStackSize()) {
+                    outputSlot.grow(1);
+                    inputSlot.shrink(1);
+                    this.lavaBuffer += 1000;
+                    this.setChanged();
+                }
+            }
+            if (this.lavaBuffer > 0 && this.energy < 10000) {
+                --this.lavaBuffer;
+                this.energy = Math.min(10000, this.energy + 20);
                 this.setChanged();
-            } else if (outputSlot.is(Items.BUCKET) && outputSlot.getCount() < outputSlot.getMaxStackSize()) {
-                outputSlot.grow(1);
-                inputSlot.shrink(1);
-                this.lavaBuffer += 1000;
-                this.setChanged();
+                if (level.getRandom().nextFloat() < 0.15f && level instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel)level;
+                    serverLevel.sendParticles((ParticleOptions)ParticleTypes.LAVA, (double)pos.getX() + 0.5, (double)pos.getY() + 1.0, (double)pos.getZ() + 0.5, 1, 0.1, 0.1, 0.1, 0.0);
+                }
             }
-        }
-        if (this.lavaBuffer > 0 && this.energy < 10000) {
-            --this.lavaBuffer;
-            this.energy = Math.min(10000, this.energy + 20);
-            this.setChanged();
-            if (level.getRandom().nextFloat() < 0.15f && level instanceof ServerLevel) {
-                ServerLevel serverLevel = (ServerLevel)level;
-                serverLevel.sendParticles((ParticleOptions)ParticleTypes.LAVA, (double)pos.getX() + 0.5, (double)pos.getY() + 1.0, (double)pos.getZ() + 0.5, 1, 0.1, 0.1, 0.1, 0.0);
+            if (this.energy > 0) {
+                this.pushEnergy(level, pos);
             }
-        }
-        if (this.energy > 0) {
-            this.pushEnergy(level, pos);
-        }
-        ++this.scanCooldown;
-        if (this.scanCooldown >= 40) {
-            this.scanCooldown = 0;
-            if (this.lavaBuffer <= 3000) {
-                this.scanAndAbsorbLava(level, pos);
+            ++this.scanCooldown;
+            if (this.scanCooldown >= 40) {
+                this.scanCooldown = 0;
+                if (this.lavaBuffer <= 3000) {
+                    this.scanAndAbsorbLava(level, pos);
+                }
             }
-        }
-        boolean bl = isWorking = this.lavaBuffer > 0;
-        if (state.hasProperty(BlockStateProperties.LIT) && (Boolean)state.getValue(BlockStateProperties.LIT) != isWorking) {
-            level.setBlock(pos, (BlockState)state.setValue(BlockStateProperties.LIT, isWorking), 3);
-        }
+            boolean bl = isWorking = this.lavaBuffer > 0;
+            if (state.hasProperty(BlockStateProperties.LIT) && (Boolean)state.getValue(BlockStateProperties.LIT) != isWorking) {
+                level.setBlock(pos, (BlockState)state.setValue(BlockStateProperties.LIT, isWorking), 3);
+            }
+        });
     }
 
     private void pushEnergy(Level level, BlockPos pos) {

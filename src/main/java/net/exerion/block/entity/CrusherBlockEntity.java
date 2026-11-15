@@ -7,6 +7,7 @@ import net.exerion.item.ModItems;
 import net.exerion.mechanical.IFMConsumer;
 import net.exerion.mechanical.MechanicalNetwork;
 import net.exerion.menu.CrusherMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -95,54 +96,56 @@ IFMConsumer {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide()) {
-            return;
-        }
-        boolean wasCrushing = (Boolean)state.getValue(CrusherBlock.CRUSHING);
-        boolean isCrushing = false;
-        int availableFM = MechanicalNetwork.getAvailableFM(level, pos);
-        if (availableFM < this.getRequiredFM()) {
-            if (this.crushTime > 0 && level.getGameTime() % 40L == 0L) {
-                level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 0.3f, 0.5f);
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            if (level.isClientSide()) {
+                return;
             }
-            this.crushTime = 0;
-            if (wasCrushing) {
-                level.setBlock(pos, (BlockState)state.setValue(CrusherBlock.CRUSHING, false), 3);
-            }
-            return;
-        }
-        ItemStack input = this.inventory.getItem(0);
-        ItemStack result = this.getResult(input);
-        if (!input.isEmpty() && !result.isEmpty()) {
-            ItemStack outputSlot = this.inventory.getItem(1);
-            if (this.canCrush(result, outputSlot)) {
-                ++this.crushTime;
-                isCrushing = true;
-                this.setChanged();
-                if (this.crushTime % 25 == 0) {
-                    level.playSound(null, pos, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.6f, 0.8f);
+            boolean wasCrushing = (Boolean)state.getValue(CrusherBlock.CRUSHING);
+            boolean isCrushing = false;
+            int availableFM = MechanicalNetwork.getAvailableFM(level, pos);
+            if (availableFM < this.getRequiredFM()) {
+                if (this.crushTime > 0 && level.getGameTime() % 40L == 0L) {
+                    level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 0.3f, 0.5f);
                 }
-                if (this.crushTime >= this.getMaxCrushTime()) {
-                    this.crushTime = 0;
-                    input.shrink(1);
-                    if (outputSlot.isEmpty()) {
-                        this.inventory.setItem(1, result.copy());
-                    } else {
-                        outputSlot.grow(result.getCount());
-                    }
-                    level.playSound(null, pos, SoundEvents.GRAVEL_BREAK, SoundSource.BLOCKS, 1.0f, 0.8f);
-                    level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.3f, 1.6f);
+                this.crushTime = 0;
+                if (wasCrushing) {
+                    level.setBlock(pos, (BlockState)state.setValue(CrusherBlock.CRUSHING, false), 3);
+                }
+                return;
+            }
+            ItemStack input = this.inventory.getItem(0);
+            ItemStack result = this.getResult(input);
+            if (!input.isEmpty() && !result.isEmpty()) {
+                ItemStack outputSlot = this.inventory.getItem(1);
+                if (this.canCrush(result, outputSlot)) {
+                    ++this.crushTime;
+                    isCrushing = true;
                     this.setChanged();
+                    if (this.crushTime % 25 == 0) {
+                        level.playSound(null, pos, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.6f, 0.8f);
+                    }
+                    if (this.crushTime >= this.getMaxCrushTime()) {
+                        this.crushTime = 0;
+                        input.shrink(1);
+                        if (outputSlot.isEmpty()) {
+                            this.inventory.setItem(1, result.copy());
+                        } else {
+                            outputSlot.grow(result.getCount());
+                        }
+                        level.playSound(null, pos, SoundEvents.GRAVEL_BREAK, SoundSource.BLOCKS, 1.0f, 0.8f);
+                        level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.3f, 1.6f);
+                        this.setChanged();
+                    }
+                } else {
+                    this.crushTime = 0;
                 }
             } else {
                 this.crushTime = 0;
             }
-        } else {
-            this.crushTime = 0;
-        }
-        if (wasCrushing != isCrushing) {
-            level.setBlock(pos, (BlockState)state.setValue(CrusherBlock.CRUSHING, isCrushing), 3);
-        }
+            if (wasCrushing != isCrushing) {
+                level.setBlock(pos, (BlockState)state.setValue(CrusherBlock.CRUSHING, isCrushing), 3);
+            }
+        });
     }
 
     private ItemStack getResult(ItemStack input) {

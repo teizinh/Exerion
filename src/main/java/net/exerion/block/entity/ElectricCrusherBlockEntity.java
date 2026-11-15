@@ -6,6 +6,7 @@ import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
 import net.exerion.item.ModItems;
 import net.exerion.menu.ElectricCrusherMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -121,44 +122,46 @@ IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide()) {
-            return;
-        }
-        boolean wasCrushing = (Boolean)state.getValue(ElectricCrusherBlock.CRUSHING);
-        boolean isCrushing = false;
-        ItemStack input = this.inventory.getItem(0);
-        ItemStack result = this.getResult(input);
-        int usage = this.getEnergyPerTick();
-        if (!input.isEmpty() && !result.isEmpty() && this.energy >= usage) {
-            ItemStack outputSlot = this.inventory.getItem(1);
-            if (this.canCrush(result, outputSlot)) {
-                this.energy -= usage;
-                ++this.crushTime;
-                isCrushing = true;
-                this.setChanged();
-                if (this.crushTime % 5 == 0) {
-                    level.playSound(null, pos, SoundEvents.COPPER_BULB_TURN_ON, SoundSource.BLOCKS, 0.4f, 1.4f);
-                }
-                if (this.crushTime >= this.getMaxCrushTime()) {
-                    this.crushTime = 0;
-                    input.shrink(1);
-                    if (outputSlot.isEmpty()) {
-                        this.inventory.setItem(1, result.copy());
-                    } else {
-                        outputSlot.grow(result.getCount());
-                    }
-                    level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.2f, 1.8f);
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            if (level.isClientSide()) {
+                return;
+            }
+            boolean wasCrushing = (Boolean)state.getValue(ElectricCrusherBlock.CRUSHING);
+            boolean isCrushing = false;
+            ItemStack input = this.inventory.getItem(0);
+            ItemStack result = this.getResult(input);
+            int usage = this.getEnergyPerTick();
+            if (!input.isEmpty() && !result.isEmpty() && this.energy >= usage) {
+                ItemStack outputSlot = this.inventory.getItem(1);
+                if (this.canCrush(result, outputSlot)) {
+                    this.energy -= usage;
+                    ++this.crushTime;
+                    isCrushing = true;
                     this.setChanged();
+                    if (this.crushTime % 5 == 0) {
+                        level.playSound(null, pos, SoundEvents.COPPER_BULB_TURN_ON, SoundSource.BLOCKS, 0.4f, 1.4f);
+                    }
+                    if (this.crushTime >= this.getMaxCrushTime()) {
+                        this.crushTime = 0;
+                        input.shrink(1);
+                        if (outputSlot.isEmpty()) {
+                            this.inventory.setItem(1, result.copy());
+                        } else {
+                            outputSlot.grow(result.getCount());
+                        }
+                        level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.2f, 1.8f);
+                        this.setChanged();
+                    }
+                } else {
+                    this.crushTime = 0;
                 }
             } else {
                 this.crushTime = 0;
             }
-        } else {
-            this.crushTime = 0;
-        }
-        if (wasCrushing != isCrushing) {
-            level.setBlock(pos, (BlockState)state.setValue(ElectricCrusherBlock.CRUSHING, isCrushing), 3);
-        }
+            if (wasCrushing != isCrushing) {
+                level.setBlock(pos, (BlockState)state.setValue(ElectricCrusherBlock.CRUSHING, isCrushing), 3);
+            }
+        });
     }
 
     private ItemStack getResult(ItemStack input) {

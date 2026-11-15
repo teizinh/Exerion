@@ -5,6 +5,7 @@ import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
 import net.exerion.item.ModItems;
 import net.exerion.menu.MiningLaserMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -98,17 +99,19 @@ IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        int cycleInterval;
-        if (level.isClientSide()) {
-            return;
-        }
-        ++this.tickCounter;
-        boolean hasSpeedUpgrade = this.inventory.getItem(0).is(ModItems.SPEED_UPGRADE);
-        int n = cycleInterval = hasSpeedUpgrade ? 20 : 40;
-        if (this.tickCounter >= cycleInterval) {
-            this.tickCounter = 0;
-            this.performMiningCycle(level, pos);
-        }
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            int cycleInterval;
+            if (level.isClientSide()) {
+                return;
+            }
+            ++this.tickCounter;
+            boolean hasSpeedUpgrade = this.inventory.getItem(0).is(ModItems.SPEED_UPGRADE);
+            int n = cycleInterval = hasSpeedUpgrade ? 20 : 40;
+            if (this.tickCounter >= cycleInterval) {
+                this.tickCounter = 0;
+                this.performMiningCycle(level, pos);
+            }
+        });
     }
 
     private void performMiningCycle(Level level, BlockPos pos) {

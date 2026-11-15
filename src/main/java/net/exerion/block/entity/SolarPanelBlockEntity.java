@@ -4,6 +4,7 @@ import net.exerion.block.SolarPanelBlock;
 import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
 import net.exerion.menu.SolarPanelMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -113,47 +114,49 @@ IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        boolean canGenerate;
-        if (level.isClientSide()) {
-            return;
-        }
-        boolean wasActive = (Boolean)state.getValue(SolarPanelBlock.ACTIVE);
-        boolean hasSky = level.canSeeSky(pos.above());
-        boolean isDay = level.getOverworldClockTime() % 24000L < 12000L;
-        this.isGenerating = canGenerate = isDay && hasSky;
-        if (canGenerate) {
-            int gen = this.getGenerationRate();
-            if (this.energy < this.getCapacity()) {
-                this.energy = Math.min(this.getCapacity(), this.energy + gen);
-                this.setChanged();
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            boolean canGenerate;
+            if (level.isClientSide()) {
+                return;
             }
-        }
-        if (wasActive != canGenerate) {
-            level.setBlock(pos, (BlockState)state.setValue(SolarPanelBlock.ACTIVE, canGenerate), 3);
-        }
-        if (this.energy > 0) {
-            int toPush;
-            IEnergyStorage storage;
-            int received;
-            int rate = this.getTransferRate();
-            BlockEntity below = level.getBlockEntity(pos.below());
-            if (below instanceof IEnergyStorage && (received = (storage = (IEnergyStorage)below).receiveEnergy(toPush = Math.min(rate, this.energy), false)) > 0) {
-                this.energy -= received;
-                this.setChanged();
-            }
-            if (this.energy > 0) {
-                for (Direction dir : Direction.Plane.HORIZONTAL) {
-                    int toPush2;
-                    IEnergyStorage storage2;
-                    int received2;
-                    if (this.energy <= 0) break;
-                    BlockEntity side = level.getBlockEntity(pos.relative(dir));
-                    if (!(side instanceof IEnergyStorage) || (received2 = (storage2 = (IEnergyStorage)side).receiveEnergy(toPush2 = Math.min(rate, this.energy), false)) <= 0) continue;
-                    this.energy -= received2;
+            boolean wasActive = (Boolean)state.getValue(SolarPanelBlock.ACTIVE);
+            boolean hasSky = level.canSeeSky(pos.above());
+            boolean isDay = level.getOverworldClockTime() % 24000L < 12000L;
+            this.isGenerating = canGenerate = isDay && hasSky;
+            if (canGenerate) {
+                int gen = this.getGenerationRate();
+                if (this.energy < this.getCapacity()) {
+                    this.energy = Math.min(this.getCapacity(), this.energy + gen);
                     this.setChanged();
                 }
             }
-        }
+            if (wasActive != canGenerate) {
+                level.setBlock(pos, (BlockState)state.setValue(SolarPanelBlock.ACTIVE, canGenerate), 3);
+            }
+            if (this.energy > 0) {
+                int toPush;
+                IEnergyStorage storage;
+                int received;
+                int rate = this.getTransferRate();
+                BlockEntity below = level.getBlockEntity(pos.below());
+                if (below instanceof IEnergyStorage && (received = (storage = (IEnergyStorage)below).receiveEnergy(toPush = Math.min(rate, this.energy), false)) > 0) {
+                    this.energy -= received;
+                    this.setChanged();
+                }
+                if (this.energy > 0) {
+                    for (Direction dir : Direction.Plane.HORIZONTAL) {
+                        int toPush2;
+                        IEnergyStorage storage2;
+                        int received2;
+                        if (this.energy <= 0) break;
+                        BlockEntity side = level.getBlockEntity(pos.relative(dir));
+                        if (!(side instanceof IEnergyStorage) || (received2 = (storage2 = (IEnergyStorage)side).receiveEnergy(toPush2 = Math.min(rate, this.energy), false)) <= 0) continue;
+                        this.energy -= received2;
+                        this.setChanged();
+                    }
+                }
+            }
+        });
     }
 
     public Component getDisplayName() {

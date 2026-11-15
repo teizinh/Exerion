@@ -5,6 +5,7 @@ import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
 import net.exerion.item.ModItems;
 import net.exerion.menu.ElectricGeneratorMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -114,64 +115,66 @@ IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        int damage;
-        ItemStack fuelSlot;
-        if (level.isClientSide()) {
-            return;
-        }
-        boolean wasGenerating = (Boolean)state.getValue(ElectricGeneratorBlock.GENERATING);
-        boolean isGenerating = false;
-        if (this.burnTime > 0) {
-            --this.burnTime;
-            isGenerating = true;
-            if (this.energy < 10000) {
-                this.energy = Math.min(10000, this.energy + this.generationRate);
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            int damage;
+            ItemStack fuelSlot;
+            if (level.isClientSide()) {
+                return;
             }
-            this.setChanged();
-        }
-        if (this.burnTime == 0 && this.energy < 10000 && !(fuelSlot = this.inventory.getItem(0)).isEmpty()) {
-            if (fuelSlot.is(Items.COAL) || fuelSlot.is(Items.CHARCOAL)) {
-                this.burnTime = 100;
-                this.maxBurnTime = 100;
-                this.generationRate = 10;
-                fuelSlot.shrink(1);
-                this.setChanged();
-            } else if (fuelSlot.is(Items.COAL_BLOCK)) {
-                this.burnTime = 900;
-                this.maxBurnTime = 900;
-                this.generationRate = 12;
-                fuelSlot.shrink(1);
-                this.setChanged();
-            } else if (fuelSlot.is(ModItems.STEAM_CRYSTAL)) {
-                this.burnTime = 200;
-                this.maxBurnTime = 200;
-                this.generationRate = 20;
-                fuelSlot.shrink(1);
-                this.setChanged();
-            } else if (fuelSlot.is(Items.LAVA_BUCKET)) {
-                this.burnTime = 400;
-                this.maxBurnTime = 400;
-                this.generationRate = 20;
-                this.inventory.setItem(0, new ItemStack((ItemLike)Items.BUCKET));
+            boolean wasGenerating = (Boolean)state.getValue(ElectricGeneratorBlock.GENERATING);
+            boolean isGenerating = false;
+            if (this.burnTime > 0) {
+                --this.burnTime;
+                isGenerating = true;
+                if (this.energy < 10000) {
+                    this.energy = Math.min(10000, this.energy + this.generationRate);
+                }
                 this.setChanged();
             }
-        }
-        ItemStack chargeSlot = this.inventory.getItem(1);
-        if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.is(ModItems.ERA_SCANNER) || chargeSlot.is(ModItems.SWISS_ARMY_KNIFE) || chargeSlot.is(ModItems.STEAM_BOOTS) || chargeSlot.is(ModItems.ELECTRIC_PLATE) || chargeSlot.is(ModItems.LOGIC_HELMET) || chargeSlot.is(ModItems.ELECTRIC_MINING_DRILL) || chargeSlot.is(ModItems.PLASMA_SWORD)) && (damage = chargeSlot.getDamageValue()) > 0) {
-            int chargeAmount = Math.min(damage, 2);
-            chargeSlot.setDamageValue(damage - chargeAmount);
-            this.energy -= chargeAmount;
-            this.setChanged();
-            if (level.getGameTime() % 20L == 0L) {
-                level.playSound(null, pos, SoundEvents.REDSTONE_TORCH_BURNOUT, SoundSource.BLOCKS, 0.4f, 1.2f);
+            if (this.burnTime == 0 && this.energy < 10000 && !(fuelSlot = this.inventory.getItem(0)).isEmpty()) {
+                if (fuelSlot.is(Items.COAL) || fuelSlot.is(Items.CHARCOAL)) {
+                    this.burnTime = 100;
+                    this.maxBurnTime = 100;
+                    this.generationRate = 10;
+                    fuelSlot.shrink(1);
+                    this.setChanged();
+                } else if (fuelSlot.is(Items.COAL_BLOCK)) {
+                    this.burnTime = 900;
+                    this.maxBurnTime = 900;
+                    this.generationRate = 12;
+                    fuelSlot.shrink(1);
+                    this.setChanged();
+                } else if (fuelSlot.is(ModItems.STEAM_CRYSTAL)) {
+                    this.burnTime = 200;
+                    this.maxBurnTime = 200;
+                    this.generationRate = 20;
+                    fuelSlot.shrink(1);
+                    this.setChanged();
+                } else if (fuelSlot.is(Items.LAVA_BUCKET)) {
+                    this.burnTime = 400;
+                    this.maxBurnTime = 400;
+                    this.generationRate = 20;
+                    this.inventory.setItem(0, new ItemStack((ItemLike)Items.BUCKET));
+                    this.setChanged();
+                }
             }
-        }
-        if (this.energy > 0) {
-            this.pushEnergy(level, pos);
-        }
-        if (wasGenerating != isGenerating) {
-            level.setBlock(pos, (BlockState)state.setValue(ElectricGeneratorBlock.GENERATING, isGenerating), 3);
-        }
+            ItemStack chargeSlot = this.inventory.getItem(1);
+            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.is(ModItems.ERA_SCANNER) || chargeSlot.is(ModItems.SWISS_ARMY_KNIFE) || chargeSlot.is(ModItems.STEAM_BOOTS) || chargeSlot.is(ModItems.ELECTRIC_PLATE) || chargeSlot.is(ModItems.LOGIC_HELMET) || chargeSlot.is(ModItems.ELECTRIC_MINING_DRILL) || chargeSlot.is(ModItems.PLASMA_SWORD)) && (damage = chargeSlot.getDamageValue()) > 0) {
+                int chargeAmount = Math.min(damage, 2);
+                chargeSlot.setDamageValue(damage - chargeAmount);
+                this.energy -= chargeAmount;
+                this.setChanged();
+                if (level.getGameTime() % 20L == 0L) {
+                    level.playSound(null, pos, SoundEvents.REDSTONE_TORCH_BURNOUT, SoundSource.BLOCKS, 0.4f, 1.2f);
+                }
+            }
+            if (this.energy > 0) {
+                this.pushEnergy(level, pos);
+            }
+            if (wasGenerating != isGenerating) {
+                level.setBlock(pos, (BlockState)state.setValue(ElectricGeneratorBlock.GENERATING, isGenerating), 3);
+            }
+        });
     }
 
     private void pushEnergy(Level level, BlockPos pos) {

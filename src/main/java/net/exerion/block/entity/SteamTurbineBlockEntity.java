@@ -5,6 +5,7 @@ import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
 import net.exerion.item.ModItems;
 import net.exerion.menu.SteamTurbineMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -89,32 +90,34 @@ IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        int damage;
-        if (level.isClientSide()) {
-            return;
-        }
-        boolean wasTurning = (Boolean)state.getValue(SteamTurbineBlock.TURNING);
-        boolean isTurning = false;
-        ItemStack crystalSlot = this.inventory.getItem(0);
-        if (this.energy <= 750 && !crystalSlot.isEmpty() && crystalSlot.is(ModItems.STEAM_CRYSTAL)) {
-            crystalSlot.shrink(1);
-            this.energy += 250;
-            this.setChanged();
-        }
-        ItemStack chargeSlot = this.inventory.getItem(1);
-        if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.is(ModItems.ERA_SCANNER) || chargeSlot.is(ModItems.SWISS_ARMY_KNIFE) || chargeSlot.is(ModItems.STEAM_BOOTS) || chargeSlot.is(ModItems.ELECTRIC_PLATE) || chargeSlot.is(ModItems.LOGIC_HELMET) || chargeSlot.is(ModItems.ELECTRIC_MINING_DRILL) || chargeSlot.is(ModItems.PLASMA_SWORD)) && (damage = chargeSlot.getDamageValue()) > 0) {
-            chargeSlot.setDamageValue(damage - 1);
-            --this.energy;
-            isTurning = true;
-            this.setChanged();
-        }
-        if (this.energy > 0) {
-            this.pushEnergy(level, pos);
-            isTurning = true;
-        }
-        if (wasTurning != isTurning) {
-            level.setBlock(pos, (BlockState)state.setValue(SteamTurbineBlock.TURNING, isTurning), 3);
-        }
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            int damage;
+            if (level.isClientSide()) {
+                return;
+            }
+            boolean wasTurning = (Boolean)state.getValue(SteamTurbineBlock.TURNING);
+            boolean isTurning = false;
+            ItemStack crystalSlot = this.inventory.getItem(0);
+            if (this.energy <= 750 && !crystalSlot.isEmpty() && crystalSlot.is(ModItems.STEAM_CRYSTAL)) {
+                crystalSlot.shrink(1);
+                this.energy += 250;
+                this.setChanged();
+            }
+            ItemStack chargeSlot = this.inventory.getItem(1);
+            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.is(ModItems.ERA_SCANNER) || chargeSlot.is(ModItems.SWISS_ARMY_KNIFE) || chargeSlot.is(ModItems.STEAM_BOOTS) || chargeSlot.is(ModItems.ELECTRIC_PLATE) || chargeSlot.is(ModItems.LOGIC_HELMET) || chargeSlot.is(ModItems.ELECTRIC_MINING_DRILL) || chargeSlot.is(ModItems.PLASMA_SWORD)) && (damage = chargeSlot.getDamageValue()) > 0) {
+                chargeSlot.setDamageValue(damage - 1);
+                --this.energy;
+                isTurning = true;
+                this.setChanged();
+            }
+            if (this.energy > 0) {
+                this.pushEnergy(level, pos);
+                isTurning = true;
+            }
+            if (wasTurning != isTurning) {
+                level.setBlock(pos, (BlockState)state.setValue(SteamTurbineBlock.TURNING, isTurning), 3);
+            }
+        });
     }
 
     private void pushEnergy(Level level, BlockPos pos) {

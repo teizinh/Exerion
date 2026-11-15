@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.menu.FrequencyEnderChestMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -158,73 +159,75 @@ implements MenuProvider {
         }
 
         public static void save(Level level) {
-            if (level.isClientSide() || level.getServer() == null) {
-                return;
-            }
-            try {
-                File file = level.getServer().getWorldPath(LevelResource.ROOT).resolve("exerion_ender_inventories.nbt").toFile();
-                CompoundTag tag = new CompoundTag();
-                CompoundTag invs = new CompoundTag();
-                for (Map.Entry<String, SimpleContainer> entry : INVENTORIES.entrySet()) {
-                    ListTag list = new ListTag();
-                    SimpleContainer container = entry.getValue();
-                    for (int i = 0; i < container.getContainerSize(); ++i) {
-                        ItemStack stack = container.getItem(i);
-                        if (stack.isEmpty()) continue;
-                        final int slotIndex = i;
-                        ItemStack.CODEC.encodeStart(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), stack).result().ifPresent(stackNbt -> {
-                            CompoundTag itemTag = new CompoundTag();
-                            itemTag.putByte("Slot", (byte)slotIndex);
-                            itemTag.put("Item", stackNbt);
-                            list.add(itemTag);
-                        });
-                    }
-                    invs.put(entry.getKey(), (Tag)list);
+            ExerionCrashGuard.safeNetwork("FrequencyEnderChest#save", () -> {
+                if (level.isClientSide() || level.getServer() == null) {
+                    return;
                 }
-                tag.put("Inventories", (Tag)invs);
-                NbtIo.writeCompressed(tag, (Path)file.toPath());
-            }
-            catch (Exception e) {
-                System.err.println("[Exerion] Failed to save ender inventories: " + e.getMessage());
-            }
+                try {
+                    File file = level.getServer().getWorldPath(LevelResource.ROOT).resolve("exerion_ender_inventories.nbt").toFile();
+                    CompoundTag tag = new CompoundTag();
+                    CompoundTag invs = new CompoundTag();
+                    for (Map.Entry<String, SimpleContainer> entry : INVENTORIES.entrySet()) {
+                        ListTag list = new ListTag();
+                        SimpleContainer container = entry.getValue();
+                        for (int i = 0; i < container.getContainerSize(); ++i) {
+                            ItemStack stack = container.getItem(i);
+                            if (stack.isEmpty()) continue;
+                            final int slotIndex = i;
+                            ItemStack.CODEC.encodeStart(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), stack).result().ifPresent(stackNbt -> {
+                                CompoundTag itemTag = new CompoundTag();
+                                itemTag.putByte("Slot", (byte)slotIndex);
+                                itemTag.put("Item", stackNbt);
+                                list.add(itemTag);
+                            });
+                        }
+                        invs.put(entry.getKey(), (Tag)list);
+                    }
+                    tag.put("Inventories", (Tag)invs);
+                    NbtIo.writeCompressed(tag, (Path)file.toPath());
+                } catch (Exception e) {
+                    System.err.println("[Exerion] Failed to save ender inventories: " + e.getMessage());
+                }
+            });
         }
 
         public static void load(final Level level) {
-            if (level.isClientSide() || level.getServer() == null) {
-                return;
-            }
-            loaded = true;
-            try {
-                File file = level.getServer().getWorldPath(LevelResource.ROOT).resolve("exerion_ender_inventories.nbt").toFile();
-                if (!file.exists()) {
+            ExerionCrashGuard.safeNetwork("FrequencyEnderChest#load", () -> {
+                if (level.isClientSide() || level.getServer() == null) {
                     return;
                 }
-                CompoundTag tag = NbtIo.readCompressed((Path)file.toPath(), (NbtAccounter)NbtAccounter.unlimitedHeap());
-                CompoundTag invs = tag.getCompoundOrEmpty("Inventories");
-                for (String key : invs.keySet()) {
-                    ListTag list = invs.getListOrEmpty(key);
-                    SimpleContainer container = new SimpleContainer(27){
-
-                        public void setChanged() {
-                            super.setChanged();
-                            EnderStorageManager.save(level);
-                        }
-                    };
-                    for (int i = 0; i < list.size(); ++i) {
-                        CompoundTag itemTag = list.getCompoundOrEmpty(i);
-                        int slot = itemTag.getByteOr("Slot", (byte)0) & 0xFF;
-                        CompoundTag stackNbt = itemTag.getCompoundOrEmpty("Item");
-                        ItemStack stack = ItemStack.CODEC.parse(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), stackNbt).result().orElse(ItemStack.EMPTY);
-                        if (!stack.isEmpty() && slot < container.getContainerSize()) {
-                            container.setItem(slot, stack);
-                        }
+                loaded = true;
+                try {
+                    File file = level.getServer().getWorldPath(LevelResource.ROOT).resolve("exerion_ender_inventories.nbt").toFile();
+                    if (!file.exists()) {
+                        return;
                     }
-                    INVENTORIES.put(key, container);
+                    CompoundTag tag = NbtIo.readCompressed((Path)file.toPath(), (NbtAccounter)NbtAccounter.unlimitedHeap());
+                    CompoundTag invs = tag.getCompoundOrEmpty("Inventories");
+                    for (String key : invs.keySet()) {
+                        ListTag list = invs.getListOrEmpty(key);
+                        SimpleContainer container = new SimpleContainer(27){
+
+                            public void setChanged() {
+                                super.setChanged();
+                                EnderStorageManager.save(level);
+                            }
+                        };
+                        for (int i = 0; i < list.size(); ++i) {
+                            CompoundTag itemTag = list.getCompoundOrEmpty(i);
+                            int slot = itemTag.getByteOr("Slot", (byte)0) & 0xFF;
+                            CompoundTag stackNbt = itemTag.getCompoundOrEmpty("Item");
+                            ItemStack stack = ItemStack.CODEC.parse(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), stackNbt).result().orElse(ItemStack.EMPTY);
+                            if (!stack.isEmpty() && slot < container.getContainerSize()) {
+                                container.setItem(slot, stack);
+                            }
+                        }
+                        INVENTORIES.put(key, container);
+                    }
+                } catch (Exception e) {
+                    System.err.println("[Exerion] Failed to load ender inventories: " + e.getMessage());
                 }
-            }
-            catch (Exception e) {
-                System.err.println("[Exerion] Failed to load ender inventories: " + e.getMessage());
-            }
+            });
         }
     }
 }

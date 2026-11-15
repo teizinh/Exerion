@@ -1,7 +1,8 @@
 # Gradle
 .gradle/
 build/
-build_neoforge/
+build_neoforge/libs/
+build_neoforge/bin/
 !releases/*.jar
 
 # IDEs

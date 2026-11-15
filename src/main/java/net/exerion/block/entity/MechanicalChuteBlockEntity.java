@@ -2,6 +2,7 @@ package net.exerion.block.entity;
 
 import net.exerion.mechanical.IFMConsumer;
 import net.exerion.mechanical.MechanicalNetwork;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
@@ -26,26 +27,25 @@ implements IFMConsumer {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide()) {
-            return;
-        }
-        if (this.transferCooldown > 0) {
-            --this.transferCooldown;
-            return;
-        }
-        if (MechanicalNetwork.getAvailableFM(level, pos) < this.getRequiredFM()) {
-            return;
-        }
-        if (MechanicalNetwork.getAvailableFM(level, pos) < this.getRequiredFM()) {
-            return;
-        }
-        BlockEntity aboveEntity = level.getBlockEntity(pos.above());
-        BlockEntity belowEntity = level.getBlockEntity(pos.below());
-        if (aboveEntity instanceof Container aboveContainer && belowEntity instanceof Container belowContainer) {
-            if (this.transferItem(aboveContainer, belowContainer, Direction.DOWN)) {
-                this.transferCooldown = 10;
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            if (level.isClientSide()) {
+                return;
             }
-        }
+            if (this.transferCooldown > 0) {
+                --this.transferCooldown;
+                return;
+            }
+            if (MechanicalNetwork.getAvailableFM(level, pos) < this.getRequiredFM()) {
+                return;
+            }
+            BlockEntity aboveEntity = level.getBlockEntity(pos.above());
+            BlockEntity belowEntity = level.getBlockEntity(pos.below());
+            if (aboveEntity instanceof Container aboveContainer && belowEntity instanceof Container belowContainer) {
+                if (this.transferItem(aboveContainer, belowContainer, Direction.DOWN)) {
+                    this.transferCooldown = 10;
+                }
+            }
+        });
     }
 
     private boolean transferItem(Container source, Container destination, Direction direction) {

@@ -5,6 +5,7 @@ import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
 import net.exerion.item.ModItems;
 import net.exerion.menu.BatBoxMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -88,32 +89,34 @@ IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        int toPush;
-        IEnergyStorage storage;
-        int received;
-        Direction outputDir;
-        BlockEntity target;
-        int damage;
-        if (level.isClientSide()) {
-            return;
-        }
-        ItemStack dischargeSlot = this.inventory.getItem(1);
-        if (this.energy <= 9750 && !dischargeSlot.isEmpty() && dischargeSlot.is(ModItems.STEAM_CRYSTAL)) {
-            dischargeSlot.shrink(1);
-            this.energy += 250;
-            this.setChanged();
-        }
-        ItemStack chargeSlot = this.inventory.getItem(0);
-        if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.is(ModItems.ERA_SCANNER) || chargeSlot.is(ModItems.SWISS_ARMY_KNIFE) || chargeSlot.is(ModItems.STEAM_BOOTS) || chargeSlot.is(ModItems.ELECTRIC_PLATE) || chargeSlot.is(ModItems.LOGIC_HELMET) || chargeSlot.is(ModItems.ELECTRIC_MINING_DRILL) || chargeSlot.is(ModItems.PLASMA_SWORD)) && (damage = chargeSlot.getDamageValue()) > 0) {
-            int chargeAmount = Math.min(damage, 32);
-            chargeSlot.setDamageValue(damage - chargeAmount);
-            this.energy -= chargeAmount;
-            this.setChanged();
-        }
-        if (this.energy > 0 && (target = level.getBlockEntity(pos.relative(outputDir = (Direction)state.getValue(BatBoxBlock.FACING)))) instanceof IEnergyStorage && (received = (storage = (IEnergyStorage)target).receiveEnergy(toPush = Math.min(32, this.energy), false)) > 0) {
-            this.energy -= received;
-            this.setChanged();
-        }
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            int toPush;
+            IEnergyStorage storage;
+            int received;
+            Direction outputDir;
+            BlockEntity target;
+            int damage;
+            if (level.isClientSide()) {
+                return;
+            }
+            ItemStack dischargeSlot = this.inventory.getItem(1);
+            if (this.energy <= 9750 && !dischargeSlot.isEmpty() && dischargeSlot.is(ModItems.STEAM_CRYSTAL)) {
+                dischargeSlot.shrink(1);
+                this.energy += 250;
+                this.setChanged();
+            }
+            ItemStack chargeSlot = this.inventory.getItem(0);
+            if (this.energy > 0 && !chargeSlot.isEmpty() && (chargeSlot.is(ModItems.ERA_SCANNER) || chargeSlot.is(ModItems.SWISS_ARMY_KNIFE) || chargeSlot.is(ModItems.STEAM_BOOTS) || chargeSlot.is(ModItems.ELECTRIC_PLATE) || chargeSlot.is(ModItems.LOGIC_HELMET) || chargeSlot.is(ModItems.ELECTRIC_MINING_DRILL) || chargeSlot.is(ModItems.PLASMA_SWORD)) && (damage = chargeSlot.getDamageValue()) > 0) {
+                int chargeAmount = Math.min(damage, 32);
+                chargeSlot.setDamageValue(damage - chargeAmount);
+                this.energy -= chargeAmount;
+                this.setChanged();
+            }
+            if (this.energy > 0 && (target = level.getBlockEntity(pos.relative(outputDir = (Direction)state.getValue(BatBoxBlock.FACING)))) instanceof IEnergyStorage && (received = (storage = (IEnergyStorage)target).receiveEnergy(toPush = Math.min(32, this.energy), false)) > 0) {
+                this.energy -= received;
+                this.setChanged();
+            }
+        });
     }
 
     public void dropContents(Level level, BlockPos pos) {

@@ -3,6 +3,7 @@ package net.exerion.block.entity;
 import net.exerion.block.CableBlock;
 import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -59,34 +60,36 @@ implements IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide()) {
-            return;
-        }
-        if (this.energy <= 0) {
-            return;
-        }
-        int transferRate = this.getTransferRate();
-        for (Direction dir : DIRECTIONS) {
-            if (this.energy <= 0) break;
-            BlockEntity be = level.getBlockEntity(pos.relative(dir));
-            if (!(be instanceof IEnergyStorage)) continue;
-            IEnergyStorage targetStorage = (IEnergyStorage)be;
-            if (be instanceof CableBlockEntity) {
-                int difference;
-                int toTransfer;
-                CableBlockEntity neighborCable = (CableBlockEntity)be;
-                if (this.energy <= neighborCable.energy || (toTransfer = Math.min(transferRate, (difference = this.energy - neighborCable.energy) / 2)) <= 0) continue;
-                int received = neighborCable.receiveEnergy(toTransfer, false);
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            if (level.isClientSide()) {
+                return;
+            }
+            if (this.energy <= 0) {
+                return;
+            }
+            int transferRate = this.getTransferRate();
+            for (Direction dir : DIRECTIONS) {
+                if (this.energy <= 0) break;
+                BlockEntity be = level.getBlockEntity(pos.relative(dir));
+                if (!(be instanceof IEnergyStorage)) continue;
+                IEnergyStorage targetStorage = (IEnergyStorage)be;
+                if (be instanceof CableBlockEntity) {
+                    int difference;
+                    int toTransfer;
+                    CableBlockEntity neighborCable = (CableBlockEntity)be;
+                    if (this.energy <= neighborCable.energy || (toTransfer = Math.min(transferRate, (difference = this.energy - neighborCable.energy) / 2)) <= 0) continue;
+                    int received = neighborCable.receiveEnergy(toTransfer, false);
+                    this.energy -= received;
+                    this.setChanged();
+                    continue;
+                }
+                int toTransfer = Math.min(transferRate, this.energy);
+                int received = targetStorage.receiveEnergy(toTransfer, false);
+                if (received <= 0) continue;
                 this.energy -= received;
                 this.setChanged();
-                continue;
             }
-            int toTransfer = Math.min(transferRate, this.energy);
-            int received = targetStorage.receiveEnergy(toTransfer, false);
-            if (received <= 0) continue;
-            this.energy -= received;
-            this.setChanged();
-        }
+        });
     }
 
     protected void saveAdditional(ValueOutput output) {

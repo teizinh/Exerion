@@ -5,6 +5,7 @@ import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.energy.IEnergyStorage;
 import net.exerion.item.ModItems;
 import net.exerion.menu.CompressorMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -106,31 +107,33 @@ IEnergyStorage {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        boolean isWorking;
-        ItemStack output;
-        if (level.isClientSide()) {
-            return;
-        }
-        ItemStack input = this.inventory.getItem(0);
-        if (this.canProcess(input, output = this.inventory.getItem(1))) {
-            if (this.energy >= 2) {
-                this.energy -= 2;
-                ++this.progress;
-                this.setChanged();
-                if (this.progress >= 160) {
-                    this.processRecipe(input);
-                    this.progress = 0;
-                    this.setChanged();
-                }
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            boolean isWorking;
+            ItemStack output;
+            if (level.isClientSide()) {
+                return;
             }
-        } else if (this.progress > 0) {
-            this.progress = Math.max(0, this.progress - 2);
-            this.setChanged();
-        }
-        boolean bl = isWorking = this.progress > 0;
-        if (state.hasProperty(BlockStateProperties.LIT) && (Boolean)state.getValue(BlockStateProperties.LIT) != isWorking) {
-            level.setBlock(pos, (BlockState)state.setValue(BlockStateProperties.LIT, isWorking), 3);
-        }
+            ItemStack input = this.inventory.getItem(0);
+            if (this.canProcess(input, output = this.inventory.getItem(1))) {
+                if (this.energy >= 2) {
+                    this.energy -= 2;
+                    ++this.progress;
+                    this.setChanged();
+                    if (this.progress >= 160) {
+                        this.processRecipe(input);
+                        this.progress = 0;
+                        this.setChanged();
+                    }
+                }
+            } else if (this.progress > 0) {
+                this.progress = Math.max(0, this.progress - 2);
+                this.setChanged();
+            }
+            boolean bl = isWorking = this.progress > 0;
+            if (state.hasProperty(BlockStateProperties.LIT) && (Boolean)state.getValue(BlockStateProperties.LIT) != isWorking) {
+                level.setBlock(pos, (BlockState)state.setValue(BlockStateProperties.LIT, isWorking), 3);
+            }
+        });
     }
 
     private boolean canProcess(ItemStack input, ItemStack output) {

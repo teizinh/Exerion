@@ -23,6 +23,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.exerion.block.entity.FrequencyEnderChestBlockEntity;
 import net.exerion.fluid.GlobalFluidNetwork;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -85,9 +86,10 @@ public class Exerion implements ModInitializer {
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             GlobalFluidNetwork.clear();
             FrequencyEnderChestBlockEntity.EnderStorageManager.clear();
+            ExerionCrashGuard.clearAll();
         });
 
-        ServerTickEvents.START_SERVER_TICK.register(server -> {
+        ServerTickEvents.START_SERVER_TICK.register(server -> ExerionCrashGuard.safeNetwork("ServerTickEvents.START_SERVER_TICK", () -> {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
                 if (!helmet.isEmpty() && helmet.is(ModItems.LOGIC_HELMET)) {
@@ -159,7 +161,7 @@ public class Exerion implements ModInitializer {
                     }
                 }
             }
-        });
+        }));
 
         BiomeModifications.addFeature(
             BiomeSelectors.foundInOverworld(),

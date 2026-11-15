@@ -8,6 +8,7 @@ import net.exerion.mechanical.IFMConsumer;
 import net.exerion.mechanical.MechanicalNetwork;
 import net.exerion.menu.GearPressMenu;
 import net.exerion.progression.EraProgressionRegistry;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -101,49 +102,53 @@ IFMConsumer {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide()) {
-            return;
-        }
-        boolean wasPressing = (Boolean)state.getValue(GearPressBlock.PRESSING);
-        boolean isPressing = false;
-        int availableFM = MechanicalNetwork.getAvailableFM(level, pos);
-        if (availableFM < this.getRequiredFM()) {
-            if (this.pressTime > 0 && level.getGameTime() % 40L == 0L) {
-                level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 0.3f, 0.5f);
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            if (level.isClientSide()) {
+                return;
             }
-            this.pressTime = 0;
-            if (wasPressing) {
-                level.setBlock(pos, (BlockState)state.setValue(GearPressBlock.PRESSING, false), 3);
+            boolean wasPressing = (Boolean)state.getValue(GearPressBlock.PRESSING);
+            boolean isPressing = false;
+            int availableFM = MechanicalNetwork.getAvailableFM(level, pos);
+            if (availableFM < this.getRequiredFM()) {
+                if (this.pressTime > 0 && level.getGameTime() % 40L == 0L) {
+                    level.playSound(null, pos, SoundEvents.IRON_DOOR_CLOSE, SoundSource.BLOCKS, 0.3f, 0.5f);
+                }
+                this.pressTime = 0;
+                if (wasPressing) {
+                    level.setBlock(pos, (BlockState)state.setValue(GearPressBlock.PRESSING, false), 3);
+                }
+                return;
             }
-            return;
-        }
-        ItemStack input = this.inventory.getItem(0);
-        ItemStack result = this.getResult(input);
-        if (!input.isEmpty() && !result.isEmpty()) {
-            Player player;
-            boolean canCraft = true;
-            if (this.lastPlayerUUID != null && (player = level.getPlayerByUUID(this.lastPlayerUUID)) != null && !EraProgressionRegistry.hasUnlockedRequiredEra(player, result.getItem())) {
-                canCraft = false;
-            }
-            if (canCraft) {
-                ItemStack outputSlot = this.inventory.getItem(1);
-                if (this.canPress(result, outputSlot)) {
-                    ++this.pressTime;
-                    isPressing = true;
-                    this.setChanged();
-                    if (this.pressTime == 25 || this.pressTime == 75) {
-                        level.playSound(null, pos, SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 0.5f, 0.7f);
-                    }
-                    if (this.pressTime >= this.getMaxPressTime()) {
-                        this.pressTime = 0;
-                        input.shrink(1);
-                        if (outputSlot.isEmpty()) {
-                            this.inventory.setItem(1, result.copy());
-                        } else {
-                            outputSlot.grow(result.getCount());
-                        }
-                        level.playSound(null, pos, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.8f, 1.8f);
+            ItemStack input = this.inventory.getItem(0);
+            ItemStack result = this.getResult(input);
+            if (!input.isEmpty() && !result.isEmpty()) {
+                Player player;
+                boolean canCraft = true;
+                if (this.lastPlayerUUID != null && (player = level.getPlayerByUUID(this.lastPlayerUUID)) != null && !EraProgressionRegistry.hasUnlockedRequiredEra(player, result.getItem())) {
+                    canCraft = false;
+                }
+                if (canCraft) {
+                    ItemStack outputSlot = this.inventory.getItem(1);
+                    if (this.canPress(result, outputSlot)) {
+                        ++this.pressTime;
+                        isPressing = true;
                         this.setChanged();
+                        if (this.pressTime == 25 || this.pressTime == 75) {
+                            level.playSound(null, pos, SoundEvents.PISTON_EXTEND, SoundSource.BLOCKS, 0.5f, 0.7f);
+                        }
+                        if (this.pressTime >= this.getMaxPressTime()) {
+                            this.pressTime = 0;
+                            input.shrink(1);
+                            if (outputSlot.isEmpty()) {
+                                this.inventory.setItem(1, result.copy());
+                            } else {
+                                outputSlot.grow(result.getCount());
+                            }
+                            level.playSound(null, pos, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.8f, 1.8f);
+                            this.setChanged();
+                        }
+                    } else {
+                        this.pressTime = 0;
                     }
                 } else {
                     this.pressTime = 0;
@@ -151,12 +156,10 @@ IFMConsumer {
             } else {
                 this.pressTime = 0;
             }
-        } else {
-            this.pressTime = 0;
-        }
-        if (wasPressing != isPressing) {
-            level.setBlock(pos, (BlockState)state.setValue(GearPressBlock.PRESSING, isPressing), 3);
-        }
+            if (wasPressing != isPressing) {
+                level.setBlock(pos, (BlockState)state.setValue(GearPressBlock.PRESSING, isPressing), 3);
+            }
+        });
     }
 
     private ItemStack getResult(ItemStack input) {

@@ -4,6 +4,7 @@ import net.exerion.block.CoalBoilerBlock;
 import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.item.ModItems;
 import net.exerion.menu.CoalBoilerMenu;
+import net.exerion.util.ExerionCrashGuard;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -93,49 +94,51 @@ implements MenuProvider {
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        boolean isBurning;
-        boolean wasBurning;
-        if (level.isClientSide()) {
-            return;
-        }
-        boolean bl = wasBurning = this.burnTime > 0;
-        if (this.burnTime > 0) {
-            --this.burnTime;
-        }
-        if (this.burnTime == 0) {
-            ItemStack fuelSlot = this.inventory.getItem(0);
-            ItemStack waterSlot = this.inventory.getItem(1);
-            if (!fuelSlot.isEmpty() && (fuelSlot.is(Items.COAL) || fuelSlot.is(Items.CHARCOAL)) && !waterSlot.isEmpty() && waterSlot.is(Items.WATER_BUCKET)) {
-                this.burnTime = 200;
-                this.maxBurnTime = 200;
-                fuelSlot.shrink(1);
-                this.inventory.setItem(1, new ItemStack((ItemLike)Items.BUCKET));
-                this.setChanged();
+        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
+            boolean isBurning;
+            boolean wasBurning;
+            if (level.isClientSide()) {
+                return;
             }
-        }
-        if (this.burnTime > 0) {
-            ++this.steamTimer;
-            if (this.steamTimer >= 40) {
-                this.steamTimer = 0;
-                ItemStack outputSlot = this.inventory.getItem(2);
-                if (outputSlot.isEmpty()) {
-                    this.inventory.setItem(2, new ItemStack((ItemLike)ModItems.STEAM_CRYSTAL));
-                    this.setChanged();
-                } else if (outputSlot.is(ModItems.STEAM_CRYSTAL) && outputSlot.getCount() < outputSlot.getMaxStackSize()) {
-                    outputSlot.grow(1);
+            boolean bl = wasBurning = this.burnTime > 0;
+            if (this.burnTime > 0) {
+                --this.burnTime;
+            }
+            if (this.burnTime == 0) {
+                ItemStack fuelSlot = this.inventory.getItem(0);
+                ItemStack waterSlot = this.inventory.getItem(1);
+                if (!fuelSlot.isEmpty() && (fuelSlot.is(Items.COAL) || fuelSlot.is(Items.CHARCOAL)) && !waterSlot.isEmpty() && waterSlot.is(Items.WATER_BUCKET)) {
+                    this.burnTime = 200;
+                    this.maxBurnTime = 200;
+                    fuelSlot.shrink(1);
+                    this.inventory.setItem(1, new ItemStack((ItemLike)Items.BUCKET));
                     this.setChanged();
                 }
             }
-        }
-        boolean bl2 = isBurning = this.burnTime > 0;
-        if (isBurning && level.getRandom().nextFloat() < 0.1f && level instanceof ServerLevel) {
-            ServerLevel serverLevel = (ServerLevel)level;
-            serverLevel.sendParticles((ParticleOptions)ParticleTypes.LARGE_SMOKE, (double)pos.getX() + 0.5, (double)pos.getY() + 1.0, (double)pos.getZ() + 0.5, 1, 0.1, 0.1, 0.1, 0.0);
-            serverLevel.sendParticles((ParticleOptions)ParticleTypes.FLAME, (double)pos.getX() + 0.5, (double)pos.getY() + 1.0, (double)pos.getZ() + 0.5, 1, 0.1, 0.1, 0.1, 0.0);
-        }
-        if (wasBurning != isBurning) {
-            level.setBlock(pos, (BlockState)state.setValue(CoalBoilerBlock.BURNING, isBurning), 3);
-        }
+            if (this.burnTime > 0) {
+                ++this.steamTimer;
+                if (this.steamTimer >= 40) {
+                    this.steamTimer = 0;
+                    ItemStack outputSlot = this.inventory.getItem(2);
+                    if (outputSlot.isEmpty()) {
+                        this.inventory.setItem(2, new ItemStack((ItemLike)ModItems.STEAM_CRYSTAL));
+                        this.setChanged();
+                    } else if (outputSlot.is(ModItems.STEAM_CRYSTAL) && outputSlot.getCount() < outputSlot.getMaxStackSize()) {
+                        outputSlot.grow(1);
+                        this.setChanged();
+                    }
+                }
+            }
+            boolean bl2 = isBurning = this.burnTime > 0;
+            if (isBurning && level.getRandom().nextFloat() < 0.1f && level instanceof ServerLevel) {
+                ServerLevel serverLevel = (ServerLevel)level;
+                serverLevel.sendParticles((ParticleOptions)ParticleTypes.LARGE_SMOKE, (double)pos.getX() + 0.5, (double)pos.getY() + 1.0, (double)pos.getZ() + 0.5, 1, 0.1, 0.1, 0.1, 0.0);
+                serverLevel.sendParticles((ParticleOptions)ParticleTypes.FLAME, (double)pos.getX() + 0.5, (double)pos.getY() + 1.0, (double)pos.getZ() + 0.5, 1, 0.1, 0.1, 0.1, 0.0);
+            }
+            if (wasBurning != isBurning) {
+                level.setBlock(pos, (BlockState)state.setValue(CoalBoilerBlock.BURNING, isBurning), 3);
+            }
+        });
     }
 
     public void dropContents(Level level, BlockPos pos) {
