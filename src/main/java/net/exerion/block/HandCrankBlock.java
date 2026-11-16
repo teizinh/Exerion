@@ -65,7 +65,7 @@ extends BaseEntityBlock {
     }
 
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
+        return RenderShape.MODEL;
     }
 
     @Nullable

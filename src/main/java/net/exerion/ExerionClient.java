@@ -18,10 +18,7 @@ import net.exerion.client.MiningLaserScreen;
 import net.exerion.client.ProgressionTerminalScreen;
 import net.exerion.client.SolarPanelScreen;
 import net.exerion.client.SteamTurbineScreen;
-import net.exerion.client.render.HandCrankRenderer;
 import net.exerion.client.render.PumpRenderer;
-import net.exerion.client.render.ShaftRenderer;
-import net.exerion.client.render.WaterWheelRenderer;
 import net.exerion.item.ModItems;
 import net.exerion.menu.ModMenuTypes;
 import net.exerion.network.ExerionNetwork;
@@ -55,9 +52,6 @@ implements ClientModInitializer {
         MenuScreens.register(ModMenuTypes.MINING_LASER_MENU, MiningLaserScreen::new);
         MenuScreens.register(ModMenuTypes.GEOTHERMAL_GENERATOR_MENU, GeothermalGeneratorScreen::new);
         MenuScreens.register(ModMenuTypes.ELECTRIC_FURNACE_MENU, ElectricFurnaceScreen::new);
-        BlockEntityRenderers.register(ModBlockEntityTypes.WATER_WHEEL_ENTITY, WaterWheelRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntityTypes.HAND_CRANK_ENTITY, HandCrankRenderer::new);
-        BlockEntityRenderers.register(ModBlockEntityTypes.SHAFT_ENTITY, ShaftRenderer::new);
         BlockEntityRenderers.register(ModBlockEntityTypes.PUMP_ENTITY, PumpRenderer::new);
         ExerionNetwork.registerClient();
         ClientTickEvents.START_CLIENT_TICK.register(client -> {

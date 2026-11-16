@@ -1,12 +1,12 @@
 {
   "variants": {
-    "spinning=false,facing=north": { "model": "exerion:block/water_wheel" },
-    "spinning=false,facing=south": { "model": "exerion:block/water_wheel", "y": 180 },
-    "spinning=false,facing=east": { "model": "exerion:block/water_wheel", "y": 90 },
-    "spinning=false,facing=west": { "model": "exerion:block/water_wheel", "y": 270 },
-    "spinning=true,facing=north": { "model": "exerion:block/water_wheel" },
-    "spinning=true,facing=south": { "model": "exerion:block/water_wheel", "y": 180 },
-    "spinning=true,facing=east": { "model": "exerion:block/water_wheel", "y": 90 },
-    "spinning=true,facing=west": { "model": "exerion:block/water_wheel", "y": 270 }
+    "facing=north,spinning=false": { "model": "exerion:block/water_wheel" },
+    "facing=south,spinning=false": { "model": "exerion:block/water_wheel", "y": 180 },
+    "facing=east,spinning=false": { "model": "exerion:block/water_wheel", "y": 90 },
+    "facing=west,spinning=false": { "model": "exerion:block/water_wheel", "y": 270 },
+    "facing=north,spinning=true": { "model": "exerion:block/water_wheel" },
+    "facing=south,spinning=true": { "model": "exerion:block/water_wheel", "y": 180 },
+    "facing=east,spinning=true": { "model": "exerion:block/water_wheel", "y": 90 },
+    "facing=west,spinning=true": { "model": "exerion:block/water_wheel", "y": 270 }
   }
 }

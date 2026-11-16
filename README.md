@@ -50,14 +50,14 @@ Instead of unlocking all high-tech machines instantaneously, **Exerion introduce
 
 ---
 
-## 📦 Pre-compiled Downloads (v1.0.10)
+## 📦 Pre-compiled Downloads (v1.0.11)
 
 Both ready-to-play compiled `.jar` binaries are available in the [`releases/`](releases/) folder:
 
 | Loader | Target Version | Binary File | Direct Link |
 |:---|:---:|:---|:---:|
-| **Fabric** | Minecraft `1.21.x` / `26.1.2` | `exerion-1.0.10.jar` | [Download Fabric JAR](releases/exerion-1.0.10.jar) |
-| **NeoForge** | Minecraft `1.21.x` / `26.1.2` | `exerion-neoforge-1.0.10.jar` | [Download NeoForge JAR](releases/exerion-neoforge-1.0.10.jar) |
+| **Fabric** | Minecraft `1.21.x` / `26.1.2` | `exerion-1.0.11.jar` | [Download Fabric JAR](releases/exerion-1.0.11.jar) |
+| **NeoForge** | Minecraft `1.21.x` / `26.1.2` | `exerion-neoforge-1.0.11.jar` | [Download NeoForge JAR](releases/exerion-neoforge-1.0.11.jar) |
 
 ---
 

@@ -1,31 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.mojang.serialization.MapCodec
- *  net.minecraft.core.BlockPos
- *  net.minecraft.core.Direction
- *  net.minecraft.core.Direction$Axis
- *  net.minecraft.world.item.context.BlockPlaceContext
- *  net.minecraft.world.level.BlockGetter
- *  net.minecraft.world.level.Level
- *  net.minecraft.world.level.block.BaseEntityBlock
- *  net.minecraft.world.level.block.Block
- *  net.minecraft.world.level.block.RenderShape
- *  net.minecraft.world.level.block.entity.BlockEntity
- *  net.minecraft.world.level.block.entity.BlockEntityTicker
- *  net.minecraft.world.level.block.entity.BlockEntityType
- *  net.minecraft.world.level.block.state.BlockBehaviour$Properties
- *  net.minecraft.world.level.block.state.BlockState
- *  net.minecraft.world.level.block.state.StateDefinition$Builder
- *  net.minecraft.world.level.block.state.properties.BlockStateProperties
- *  net.minecraft.world.level.block.state.properties.BooleanProperty
- *  net.minecraft.world.level.block.state.properties.EnumProperty
- *  net.minecraft.world.level.block.state.properties.Property
- *  net.minecraft.world.phys.shapes.CollisionContext
- *  net.minecraft.world.phys.shapes.VoxelShape
- *  org.jetbrains.annotations.Nullable
- */
 package net.exerion.block;
 
 import com.mojang.serialization.MapCodec;
@@ -67,7 +39,7 @@ extends BaseEntityBlock {
 
     public ShaftBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue((Property)SPINNING, (Comparable)Boolean.valueOf(false))).setValue(AXIS, (Comparable)Direction.Axis.Y));
+        this.registerDefaultState((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(SPINNING, false)).setValue(AXIS, Direction.Axis.Y));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -75,7 +47,7 @@ extends BaseEntityBlock {
     }
 
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
+        return RenderShape.MODEL;
     }
 
     @Nullable
@@ -94,15 +66,15 @@ extends BaseEntityBlock {
         Level level = context.getLevel();
         BlockState stateAtClicked = level.getBlockState((clickedPos = context.getClickedPos()).relative((clickedFace = context.getClickedFace()).getOpposite()));
         if (stateAtClicked.getBlock() instanceof ShaftBlock) {
-            return (BlockState)((BlockState)this.defaultBlockState().setValue(AXIS, (Comparable)((Direction.Axis)stateAtClicked.getValue(AXIS)))).setValue((Property)SPINNING, (Comparable)Boolean.valueOf(false));
+            return (BlockState)((BlockState)this.defaultBlockState().setValue(AXIS, ((Direction.Axis)stateAtClicked.getValue(AXIS)))).setValue(SPINNING, false);
         }
         if (stateAtClicked.getBlock() instanceof HandCrankBlock) {
-            return (BlockState)((BlockState)this.defaultBlockState().setValue(AXIS, (Comparable)((Direction)stateAtClicked.getValue(HandCrankBlock.FACING)).getAxis())).setValue((Property)SPINNING, (Comparable)Boolean.valueOf(false));
+            return (BlockState)((BlockState)this.defaultBlockState().setValue(AXIS, ((Direction)stateAtClicked.getValue(HandCrankBlock.FACING)).getAxis())).setValue(SPINNING, false);
         }
         if (stateAtClicked.getBlock() instanceof WaterWheelBlock) {
-            return (BlockState)((BlockState)this.defaultBlockState().setValue(AXIS, (Comparable)((Direction)stateAtClicked.getValue(WaterWheelBlock.FACING)).getAxis())).setValue((Property)SPINNING, (Comparable)Boolean.valueOf(false));
+            return (BlockState)((BlockState)this.defaultBlockState().setValue(AXIS, ((Direction)stateAtClicked.getValue(WaterWheelBlock.FACING)).getAxis())).setValue(SPINNING, false);
         }
-        return (BlockState)((BlockState)this.defaultBlockState().setValue(AXIS, (Comparable)clickedFace.getAxis())).setValue((Property)SPINNING, (Comparable)Boolean.valueOf(false));
+        return (BlockState)((BlockState)this.defaultBlockState().setValue(AXIS, clickedFace.getAxis())).setValue(SPINNING, false);
     }
 
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {

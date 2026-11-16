@@ -1,7 +1,10 @@
 {
   "variants": {
-    "axis=y": { "model": "exerion:block/shaft" },
-    "axis=x": { "model": "exerion:block/shaft", "x": 90, "y": 90 },
-    "axis=z": { "model": "exerion:block/shaft", "x": 90 }
+    "axis=x,spinning=false": { "model": "exerion:block/shaft", "x": 90, "y": 90 },
+    "axis=x,spinning=true": { "model": "exerion:block/shaft", "x": 90, "y": 90 },
+    "axis=y,spinning=false": { "model": "exerion:block/shaft" },
+    "axis=y,spinning=true": { "model": "exerion:block/shaft" },
+    "axis=z,spinning=false": { "model": "exerion:block/shaft", "x": 90 },
+    "axis=z,spinning=true": { "model": "exerion:block/shaft", "x": 90 }
   }
 }
