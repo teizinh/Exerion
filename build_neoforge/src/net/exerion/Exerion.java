@@ -99,10 +99,12 @@ public class Exerion {
         NeoForge.EVENT_BUS.addListener(this::onServerTick);
         NeoForge.EVENT_BUS.addListener(this::onServerStopping);
         try {
-            ExerionClient.init(modEventBus);
+            if (net.neoforged.fml.loading.FMLEnvironment.getDist().isClient()) {
+                ExerionClient.init(modEventBus);
+            }
         }
         catch (Throwable throwable) {
-            // empty catch block
+            LOGGER.error("Failed to initialize ExerionClient", throwable);
         }
         LOGGER.info("Exerion Mod initialized successfully!");
     }

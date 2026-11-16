@@ -58,6 +58,7 @@ public class ExerionClient {
     }
 
     private static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
+        Exerion.LOGGER.info("Registering Exerion menu screens for NeoForge (16 screens)...");
         event.register(ModMenuTypes.COAL_BOILER_MENU, CoalBoilerScreen::new);
         event.register(ModMenuTypes.PROGRESSION_TERMINAL_MENU, ProgressionTerminalScreen::new);
         event.register(ModMenuTypes.STEAM_TURBINE_MENU, SteamTurbineScreen::new);

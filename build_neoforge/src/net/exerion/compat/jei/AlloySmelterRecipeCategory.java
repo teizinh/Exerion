@@ -1,35 +1,32 @@
 package net.exerion.compat.jei;
 
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.types.IRecipeType;
 import net.exerion.block.ModBlocks;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public class AlloySmelterRecipeCategory implements IRecipeCategory<AlloySmelterJeiRecipe> {
-    public static final Identifier UID = Identifier.fromNamespaceAndPath("exerion", "alloy_smelter");
-    public static final RecipeType<AlloySmelterJeiRecipe> TYPE = new RecipeType<>(UID, AlloySmelterJeiRecipe.class);
+    public static final IRecipeType<AlloySmelterJeiRecipe> TYPE = IRecipeType.create("exerion", "alloy_smelter", AlloySmelterJeiRecipe.class);
     private final IDrawable background;
     private final IDrawable icon;
 
     public AlloySmelterRecipeCategory(IGuiHelper helper) {
         Identifier texture = Identifier.fromNamespaceAndPath("minecraft", "textures/gui/container/furnace.png");
         this.background = helper.createDrawable(texture, 55, 16, 82, 54);
-        this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModBlocks.ALLOY_SMELTER));
+        this.icon = helper.createDrawableItemStack(new ItemStack(ModBlocks.ALLOY_SMELTER));
     }
 
     @Override
-    public RecipeType<AlloySmelterJeiRecipe> getRecipeType() {
+    public IRecipeType<AlloySmelterJeiRecipe> getRecipeType() {
         return TYPE;
     }
 
@@ -49,17 +46,16 @@ public class AlloySmelterRecipeCategory implements IRecipeCategory<AlloySmelterJ
     }
 
     @Override
+    public IDrawable getIcon() {
+        return this.icon;
+    }
+
     public IDrawable getBackground() {
         return this.background;
     }
 
     @Override
-    public IDrawable getIcon() {
-        return this.icon;
-    }
-
-    @Override
-    public void draw(AlloySmelterJeiRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+    public void draw(AlloySmelterJeiRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         this.background.draw(guiGraphics, 0, 0);
     }
 

@@ -36,10 +36,9 @@ public class ExerionJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.CRUSHER), CrusherRecipeCategory.TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.ELECTRIC_CRUSHER), CrusherRecipeCategory.TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.ALLOY_SMELTER), AlloySmelterRecipeCategory.TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.COMPRESSOR), CompressorRecipeCategory.TYPE);
-        registration.addRecipeCatalyst(new ItemStack(ModBlocks.GEAR_PRESS), GearPressRecipeCategory.TYPE);
+        registration.addCraftingStation(CrusherRecipeCategory.TYPE, ModBlocks.CRUSHER, ModBlocks.ELECTRIC_CRUSHER);
+        registration.addCraftingStation(AlloySmelterRecipeCategory.TYPE, ModBlocks.ALLOY_SMELTER);
+        registration.addCraftingStation(CompressorRecipeCategory.TYPE, ModBlocks.COMPRESSOR);
+        registration.addCraftingStation(GearPressRecipeCategory.TYPE, ModBlocks.GEAR_PRESS);
     }
 }
