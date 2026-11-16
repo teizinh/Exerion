@@ -134,6 +134,34 @@ IEnergyStorage {
         this.setChanged();
     }
 
+    private static java.lang.reflect.Method TIME_METHOD = null;
+    private static boolean TIME_METHOD_CHECKED = false;
+
+    private static boolean isDayTime(Level level) {
+        if (!TIME_METHOD_CHECKED) {
+            TIME_METHOD_CHECKED = true;
+            try {
+                TIME_METHOD = Level.class.getMethod("getDayTime");
+            } catch (Throwable ignored) {
+                try {
+                    TIME_METHOD = Level.class.getMethod("getOverworldClockTime");
+                } catch (Throwable ignored2) {
+                }
+            }
+            if (TIME_METHOD != null) {
+                TIME_METHOD.setAccessible(true);
+            }
+        }
+        if (TIME_METHOD != null) {
+            try {
+                long time = ((Number) TIME_METHOD.invoke(level)).longValue();
+                return (time % 24000L) < 12000L;
+            } catch (Throwable ignored) {
+            }
+        }
+        return level.dimensionType().hasSkyLight();
+    }
+
     public void tick(Level level, BlockPos pos, BlockState state) {
         ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
             boolean canGenerate;
@@ -142,7 +170,7 @@ IEnergyStorage {
             }
             boolean wasActive = (Boolean)state.getValue(SolarPanelBlock.ACTIVE);
             boolean hasSky = level.canSeeSky(pos.above());
-            boolean isDay = level.getOverworldClockTime() % 24000L < 12000L;
+            boolean isDay = isDayTime(level);
             this.isGenerating = canGenerate = isDay && hasSky;
             if (canGenerate) {
                 int gen = this.getGenerationRate();
