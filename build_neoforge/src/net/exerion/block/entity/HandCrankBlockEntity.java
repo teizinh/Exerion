@@ -15,8 +15,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class HandCrankBlockEntity
 extends BlockEntity
 implements IFMSource {
-    public static final int BURST_PER_CLICK = 60;
-    public static final int MAX_BUFFER = 300;
+    public static final int BURST_PER_CLICK = 20;
+    public static final int MAX_BUFFER = 40;
     public static final int OUTPUT_RATE = 20;
     private int fmBuffer = 0;
     private boolean isBurstMode = true;

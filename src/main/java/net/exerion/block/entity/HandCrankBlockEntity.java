@@ -15,9 +15,9 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class HandCrankBlockEntity
 extends BlockEntity
 implements IFMSource {
-    public static final int BURST_PER_CLICK = 50;
-    public static final int MAX_BUFFER = 200;
-    public static final int OUTPUT_RATE = 8;
+    public static final int BURST_PER_CLICK = 20;
+    public static final int MAX_BUFFER = 40;
+    public static final int OUTPUT_RATE = 20;
     private int fmBuffer = 0;
     private boolean isBurstMode = true;
     private long lastCrankTime = 0L;
@@ -60,7 +60,7 @@ implements IFMSource {
 
     public void crank(Level level) {
         if (this.isBurstMode) {
-            this.fmBuffer = Math.min(this.fmBuffer + 50, 200);
+            this.fmBuffer = Math.min(this.fmBuffer + BURST_PER_CLICK, MAX_BUFFER);
         } else {
             this.lastCrankTime = level.getGameTime();
         }
@@ -75,7 +75,7 @@ implements IFMSource {
     }
 
     public int getMaxBuffer() {
-        return 200;
+        return MAX_BUFFER;
     }
 
     @Override
@@ -83,8 +83,8 @@ implements IFMSource {
         if (this.isBurstMode) {
             return this.fmBuffer > 0 ? OUTPUT_RATE : 0;
         }
-        if (this.level != null && this.level.getGameTime() - this.lastCrankTime <= 2L) {
-            return 12;
+        if (this.level != null && this.level.getGameTime() - this.lastCrankTime <= 4L) {
+            return 24;
         }
         return 0;
     }
@@ -94,7 +94,7 @@ implements IFMSource {
         if (this.isBurstMode) {
             return this.fmBuffer > 0;
         }
-        return this.level != null && this.level.getGameTime() - this.lastCrankTime <= 2L;
+        return this.level != null && this.level.getGameTime() - this.lastCrankTime <= 4L;
     }
 
     public void tick(Level level, BlockPos pos, BlockState state) {
@@ -109,7 +109,7 @@ implements IFMSource {
                 this.fmBuffer = Math.max(0, this.fmBuffer - 1);
                 this.setChanged();
             }
-            boolean isGenerating = this.isBurstMode ? this.fmBuffer > 0 : level.getGameTime() - this.lastCrankTime <= 2L;
+            boolean isGenerating = this.isBurstMode ? this.fmBuffer > 0 : level.getGameTime() - this.lastCrankTime <= 4L;
             boolean wasCranking = (Boolean)state.getValue(HandCrankBlock.CRANKING);
             if (wasCranking != isGenerating) {
                 level.setBlock(pos, (BlockState)state.setValue(HandCrankBlock.CRANKING, isGenerating), 3);

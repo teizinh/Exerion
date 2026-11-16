@@ -6,14 +6,14 @@
     "particle": "exerion:block/hand_crank"
   },
   "elements": [
-    { "from": [2, 0, 2], "to": [14, 2, 14],
+    { "from": [4, 0, 4], "to": [12, 2, 12],
       "faces": {
-        "down":  {"texture": "#all", "uv": [2,2,14,14]},
-        "up":    {"texture": "#all", "uv": [2,2,14,14]},
-        "north": {"texture": "#all", "uv": [2,0,14,2]},
-        "south": {"texture": "#all", "uv": [2,0,14,2]},
-        "east":  {"texture": "#all", "uv": [2,0,14,2]},
-        "west":  {"texture": "#all", "uv": [2,0,14,2]}
+        "down":  {"texture": "#all", "uv": [4,4,12,12]},
+        "up":    {"texture": "#all", "uv": [4,4,12,12]},
+        "north": {"texture": "#all", "uv": [4,0,12,2]},
+        "south": {"texture": "#all", "uv": [4,0,12,2]},
+        "east":  {"texture": "#all", "uv": [4,0,12,2]},
+        "west":  {"texture": "#all", "uv": [4,0,12,2]}
       }
     },
     { "from": [6, 2, 6], "to": [10, 8, 10],

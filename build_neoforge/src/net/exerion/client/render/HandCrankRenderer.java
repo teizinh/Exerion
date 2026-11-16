@@ -37,7 +37,7 @@ public class HandCrankRenderer implements BlockEntityRenderer<HandCrankBlockEnti
         renderState.cranking = blockEntity.getBlockState() != null && blockEntity.getBlockState().hasProperty(HandCrankBlock.CRANKING) && blockEntity.getBlockState().getValue(HandCrankBlock.CRANKING);
         renderState.facing = (blockEntity.getBlockState() != null && blockEntity.getBlockState().hasProperty(HandCrankBlock.FACING)) ? blockEntity.getBlockState().getValue(HandCrankBlock.FACING) : Direction.UP;
         if (renderState.cranking && blockEntity.getLevel() != null) {
-            renderState.rotationAngle = ((float)blockEntity.getLevel().getGameTime() + partialTick) * 12.0f % 360.0f;
+            renderState.rotationAngle = ((float)blockEntity.getLevel().getGameTime() + partialTick) * 18.0f % 360.0f;
         } else {
             renderState.rotationAngle = 0.0f;
         }
@@ -53,13 +53,13 @@ public class HandCrankRenderer implements BlockEntityRenderer<HandCrankBlockEnti
         Direction facing = renderState.facing;
         float angle = renderState.rotationAngle;
         if (facing == Direction.NORTH) {
-            poseStack.mulPose(Axis.ZP.rotationDegrees(-angle));
-        } else if (facing == Direction.SOUTH) {
             poseStack.mulPose(Axis.ZP.rotationDegrees(angle));
+        } else if (facing == Direction.SOUTH) {
+            poseStack.mulPose(Axis.ZP.rotationDegrees(-angle));
         } else if (facing == Direction.WEST) {
-            poseStack.mulPose(Axis.XP.rotationDegrees(-angle));
-        } else if (facing == Direction.EAST) {
             poseStack.mulPose(Axis.XP.rotationDegrees(angle));
+        } else if (facing == Direction.EAST) {
+            poseStack.mulPose(Axis.XP.rotationDegrees(-angle));
         } else if (facing == Direction.DOWN) {
             poseStack.mulPose(Axis.YP.rotationDegrees(-angle));
         } else {
