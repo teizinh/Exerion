@@ -102,10 +102,22 @@ extends BaseEntityBlock {
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) {
-            return null;
+        // Zero-overhead: Cable polling ticks replaced completely by GlobalEnergyNetwork native/Union-Find solver
+        return null;
+    }
+
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, level, pos, oldState, isMoving);
+        if (!level.isClientSide()) {
+            net.exerion.energy.GlobalEnergyNetwork.onCableAdded(level, pos, this.maxTransfer, this.maxCapacity);
         }
-        return CableBlock.createTickerHelper(type, ModBlockEntityTypes.CABLE_ENTITY, (lvl, pos, st, be) -> be.tick(lvl, pos, st));
+    }
+
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, boolean isMoving) {
+        super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
+        net.exerion.energy.GlobalEnergyNetwork.onCableRemoved(level, pos);
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext context) {

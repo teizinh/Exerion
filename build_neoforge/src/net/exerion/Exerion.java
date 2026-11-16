@@ -132,6 +132,7 @@ public class Exerion {
     }
 
     private void onServerStopping(ServerStoppingEvent event) {
+        net.exerion.energy.GlobalEnergyNetwork.clear();
         GlobalFluidNetwork.clear();
         FrequencyEnderChestBlockEntity.EnderStorageManager.clear();
         ExerionCrashGuard.clearAll();
@@ -143,6 +144,9 @@ public class Exerion {
             return;
         }
         ExerionCrashGuard.safeNetwork("ServerTickEvent.Pre", () -> {
+            for (net.minecraft.server.level.ServerLevel level : server.getAllLevels()) {
+                net.exerion.energy.GlobalEnergyNetwork.tick(level);
+            }
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             int fallBlocks;
             ItemStack boots;
@@ -165,17 +169,32 @@ public class Exerion {
                         BlockPos targetPos = hit.getBlockPos();
                         BlockEntity be = player.level().getBlockEntity(targetPos);
                         if (be != null) {
-                            String msg = null;
-                            if (be instanceof IEnergyStorage) {
+                            StringBuilder sb = new StringBuilder("\u00a7b[HUD] ").append(be.getBlockState().getBlock().getName().getString()).append(" \u00a77|");
+                            boolean hasData = false;
+                            if (be instanceof IEnergyStorage && !(be instanceof net.exerion.block.entity.CableBlockEntity)) {
                                 IEnergyStorage energyStorage = (IEnergyStorage)be;
-                                msg = "\u00a7b[HUD] " + be.getBlockState().getBlock().getName().getString() + " \u00a77| \u00a7eEnergia: \u00a7f" + energyStorage.getEnergy() + " / " + energyStorage.getMaxEnergy() + " EU";
-                            } else if (be instanceof CoalBoilerBlockEntity) {
+                                sb.append(" \u00a7eEnergia: \u00a7f").append(energyStorage.getEnergy()).append(" / ").append(energyStorage.getMaxEnergy()).append(" EU");
+                                hasData = true;
+                            }
+                            if (be instanceof net.exerion.mechanical.IFMSource) {
+                                net.exerion.mechanical.IFMSource fmSource = (net.exerion.mechanical.IFMSource)be;
+                                sb.append(" \u00a73Torque Gerado: \u00a7b").append(fmSource.getOutputFM()).append(" FM");
+                                hasData = true;
+                            }
+                            if (be instanceof net.exerion.mechanical.IFMConsumer) {
+                                net.exerion.mechanical.IFMConsumer fmConsumer = (net.exerion.mechanical.IFMConsumer)be;
+                                int avail = net.exerion.mechanical.MechanicalNetwork.getAvailableFM(player.level(), targetPos);
+                                sb.append(" \u00a73Torque: \u00a7b").append(avail).append(" / ").append(fmConsumer.getRequiredFM()).append(" FM");
+                                hasData = true;
+                            }
+                            if (be instanceof CoalBoilerBlockEntity) {
                                 CoalBoilerBlockEntity boiler = (CoalBoilerBlockEntity)be;
                                 boolean isBurning = boiler.getBurnTime() > 0;
-                                msg = "\u00a7b[HUD] Caldeira a Carv\u00e3o \u00a77| \u00a7eCombust\u00e3o: " + (isBurning ? "\u00a7aA Queimar" : "\u00a7cDesligada");
+                                sb.append(" \u00a7eCombust\u00e3o: ").append(isBurning ? "\u00a7aA Queimar" : "\u00a7cDesligada");
+                                hasData = true;
                             }
-                            if (msg != null) {
-                                player.sendSystemMessage((Component)Component.literal(msg), true);
+                            if (hasData) {
+                                player.sendSystemMessage((Component)Component.literal(sb.toString()), true);
                             }
                         }
                     }

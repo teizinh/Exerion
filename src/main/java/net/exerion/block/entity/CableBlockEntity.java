@@ -59,37 +59,48 @@ implements IEnergyStorage {
         this.setChanged();
     }
 
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (level != null && !level.isClientSide()) {
+            net.exerion.energy.GlobalEnergyNetwork.onCableAdded(level, this.worldPosition, this.getTransferRate(), this.getCapacity());
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level != null && !this.level.isClientSide()) {
+            net.exerion.energy.GlobalEnergyNetwork.onCableRemoved(this.level, this.worldPosition);
+        }
+    }
+
+    private int receiveEnergyLocal(int maxReceive, boolean simulate) {
+        int energyReceived = Math.min(this.getMaxEnergy() - this.getEnergy(), maxReceive);
+        if (!simulate) {
+            this.setEnergy(this.getEnergy() + energyReceived);
+        }
+        return energyReceived;
+    }
+
+    @Override
+    public int receiveEnergy(int maxReceive, boolean simulate) {
+        if (this.level == null || this.level.isClientSide() || maxReceive <= 0) {
+            return receiveEnergyLocal(maxReceive, simulate);
+        }
+
+        int routed = net.exerion.energy.GlobalEnergyNetwork.routeEnergy(this.level, this.worldPosition, maxReceive, simulate);
+        if (routed >= maxReceive || simulate) {
+            return routed;
+        }
+
+        int remaining = maxReceive - routed;
+        int stored = receiveEnergyLocal(remaining, false);
+        return routed + stored;
+    }
+
     public void tick(Level level, BlockPos pos, BlockState state) {
-        ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
-            if (level.isClientSide()) {
-                return;
-            }
-            if (this.energy <= 0) {
-                return;
-            }
-            int transferRate = this.getTransferRate();
-            for (Direction dir : DIRECTIONS) {
-                if (this.energy <= 0) break;
-                BlockEntity be = level.getBlockEntity(pos.relative(dir));
-                if (!(be instanceof IEnergyStorage)) continue;
-                IEnergyStorage targetStorage = (IEnergyStorage)be;
-                if (be instanceof CableBlockEntity) {
-                    int difference;
-                    int toTransfer;
-                    CableBlockEntity neighborCable = (CableBlockEntity)be;
-                    if (this.energy <= neighborCable.energy || (toTransfer = Math.min(transferRate, (difference = this.energy - neighborCable.energy) / 2)) <= 0) continue;
-                    int received = neighborCable.receiveEnergy(toTransfer, false);
-                    this.energy -= received;
-                    this.setChanged();
-                    continue;
-                }
-                int toTransfer = Math.min(transferRate, this.energy);
-                int received = targetStorage.receiveEnergy(toTransfer, false);
-                if (received <= 0) continue;
-                this.energy -= received;
-                this.setChanged();
-            }
-        });
+        // No-op: Cable polling is completely replaced by GlobalEnergyNetwork (0 tick overhead)
     }
 
     protected void saveAdditional(ValueOutput output) {

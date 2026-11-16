@@ -1,6 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- */
 package net.exerion.energy;
 
 public interface IEnergyStorage {

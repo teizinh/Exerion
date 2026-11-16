@@ -22,3 +22,6 @@ run-client/
 run-server/
 logs/
 crash-reports/
+
+# Cargo / Rust
+target/

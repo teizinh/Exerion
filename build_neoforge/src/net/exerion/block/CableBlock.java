@@ -1,33 +1,3 @@
-/*
- * Decompiled with CFR 0.152.
- * 
- * Could not load the following classes:
- *  com.mojang.serialization.MapCodec
- *  net.minecraft.core.BlockPos
- *  net.minecraft.core.Direction
- *  net.minecraft.util.RandomSource
- *  net.minecraft.world.item.context.BlockPlaceContext
- *  net.minecraft.world.level.BlockGetter
- *  net.minecraft.world.level.Level
- *  net.minecraft.world.level.LevelReader
- *  net.minecraft.world.level.ScheduledTickAccess
- *  net.minecraft.world.level.block.BaseEntityBlock
- *  net.minecraft.world.level.block.Block
- *  net.minecraft.world.level.block.RenderShape
- *  net.minecraft.world.level.block.entity.BlockEntity
- *  net.minecraft.world.level.block.entity.BlockEntityTicker
- *  net.minecraft.world.level.block.entity.BlockEntityType
- *  net.minecraft.world.level.block.state.BlockBehaviour$Properties
- *  net.minecraft.world.level.block.state.BlockState
- *  net.minecraft.world.level.block.state.StateDefinition$Builder
- *  net.minecraft.world.level.block.state.properties.BlockStateProperties
- *  net.minecraft.world.level.block.state.properties.BooleanProperty
- *  net.minecraft.world.level.block.state.properties.Property
- *  net.minecraft.world.phys.shapes.CollisionContext
- *  net.minecraft.world.phys.shapes.Shapes
- *  net.minecraft.world.phys.shapes.VoxelShape
- *  org.jetbrains.annotations.Nullable
- */
 package net.exerion.block;
 
 import com.mojang.serialization.MapCodec;
@@ -73,22 +43,22 @@ extends BaseEntityBlock {
 
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         VoxelShape shape = Block.box((double)6.0, (double)6.0, (double)6.0, (double)10.0, (double)10.0, (double)10.0);
-        if (((Boolean)state.getValue((Property)NORTH)).booleanValue()) {
+        if (((Boolean)state.getValue(NORTH)).booleanValue()) {
             shape = Shapes.or((VoxelShape)shape, (VoxelShape)Block.box((double)6.0, (double)6.0, (double)0.0, (double)10.0, (double)10.0, (double)6.0));
         }
-        if (((Boolean)state.getValue((Property)SOUTH)).booleanValue()) {
+        if (((Boolean)state.getValue(SOUTH)).booleanValue()) {
             shape = Shapes.or((VoxelShape)shape, (VoxelShape)Block.box((double)6.0, (double)6.0, (double)10.0, (double)10.0, (double)10.0, (double)16.0));
         }
-        if (((Boolean)state.getValue((Property)WEST)).booleanValue()) {
+        if (((Boolean)state.getValue(WEST)).booleanValue()) {
             shape = Shapes.or((VoxelShape)shape, (VoxelShape)Block.box((double)0.0, (double)6.0, (double)6.0, (double)6.0, (double)10.0, (double)10.0));
         }
-        if (((Boolean)state.getValue((Property)EAST)).booleanValue()) {
+        if (((Boolean)state.getValue(EAST)).booleanValue()) {
             shape = Shapes.or((VoxelShape)shape, (VoxelShape)Block.box((double)10.0, (double)6.0, (double)6.0, (double)16.0, (double)10.0, (double)10.0));
         }
-        if (((Boolean)state.getValue((Property)DOWN)).booleanValue()) {
+        if (((Boolean)state.getValue(DOWN)).booleanValue()) {
             shape = Shapes.or((VoxelShape)shape, (VoxelShape)Block.box((double)6.0, (double)0.0, (double)6.0, (double)10.0, (double)6.0, (double)10.0));
         }
-        if (((Boolean)state.getValue((Property)UP)).booleanValue()) {
+        if (((Boolean)state.getValue(UP)).booleanValue()) {
             shape = Shapes.or((VoxelShape)shape, (VoxelShape)Block.box((double)6.0, (double)10.0, (double)6.0, (double)10.0, (double)16.0, (double)10.0));
         }
         return shape;
@@ -106,7 +76,7 @@ extends BaseEntityBlock {
         super(properties);
         this.maxTransfer = maxTransfer;
         this.maxCapacity = maxCapacity;
-        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue((Property)NORTH, (Comparable)Boolean.valueOf(false))).setValue((Property)EAST, (Comparable)Boolean.valueOf(false))).setValue((Property)SOUTH, (Comparable)Boolean.valueOf(false))).setValue((Property)WEST, (Comparable)Boolean.valueOf(false))).setValue((Property)UP, (Comparable)Boolean.valueOf(false))).setValue((Property)DOWN, (Comparable)Boolean.valueOf(false)));
+        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(NORTH, false)).setValue(EAST, false)).setValue(SOUTH, false)).setValue(WEST, false)).setValue(UP, false)).setValue(DOWN, false));
     }
 
     public int getMaxTransfer() {
@@ -132,10 +102,22 @@ extends BaseEntityBlock {
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide()) {
-            return null;
+        // Zero-overhead: Cable polling ticks replaced completely by GlobalEnergyNetwork native/Union-Find solver
+        return null;
+    }
+
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean isMoving) {
+        super.onPlace(state, level, pos, oldState, isMoving);
+        if (!level.isClientSide()) {
+            net.exerion.energy.GlobalEnergyNetwork.onCableAdded(level, pos, this.maxTransfer, this.maxCapacity);
         }
-        return CableBlock.createTickerHelper(type, ModBlockEntityTypes.CABLE_ENTITY, (lvl, pos, st, be) -> be.tick(lvl, pos, st));
+    }
+
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, boolean isMoving) {
+        super.affectNeighborsAfterRemoval(state, level, pos, isMoving);
+        net.exerion.energy.GlobalEnergyNetwork.onCableRemoved(level, pos);
     }
 
     public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -153,7 +135,7 @@ extends BaseEntityBlock {
     }
 
     private BlockState makeConnections(Level level, BlockPos pos, BlockState state) {
-        return (BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)state.setValue((Property)NORTH, (Comparable)Boolean.valueOf(this.canConnectTo(level, pos.north())))).setValue((Property)EAST, (Comparable)Boolean.valueOf(this.canConnectTo(level, pos.east())))).setValue((Property)SOUTH, (Comparable)Boolean.valueOf(this.canConnectTo(level, pos.south())))).setValue((Property)WEST, (Comparable)Boolean.valueOf(this.canConnectTo(level, pos.west())))).setValue((Property)UP, (Comparable)Boolean.valueOf(this.canConnectTo(level, pos.above())))).setValue((Property)DOWN, (Comparable)Boolean.valueOf(this.canConnectTo(level, pos.below())));
+        return (BlockState)((BlockState)((BlockState)((BlockState)((BlockState)((BlockState)state.setValue(NORTH, this.canConnectTo(level, pos.north()))).setValue(EAST, this.canConnectTo(level, pos.east()))).setValue(SOUTH, this.canConnectTo(level, pos.south()))).setValue(WEST, this.canConnectTo(level, pos.west()))).setValue(UP, this.canConnectTo(level, pos.above()))).setValue(DOWN, this.canConnectTo(level, pos.below()));
     }
 
     private boolean canConnectTo(Level level, BlockPos targetPos) {

@@ -1,0 +1,12 @@
+[package]
+name = "exerion-grid"
+version = "0.1.0"
+edition = "2021"
+authors = ["Salvador Pontes <teizinh>", "Exerion Contributors"]
+description = "Native contiguous graph solver for Exerion energy grids"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+jni = { version = "0.21", default-features = false }

@@ -44,14 +44,14 @@ Instead of unlocking all high-tech machines instantaneously, **Exerion introduce
 
 ---
 
-## 📦 Pre-compiled Downloads (v1.0.7)
+## 📦 Pre-compiled Downloads (v1.0.8)
 
 Both ready-to-play compiled `.jar` binaries are available in the [`releases/`](releases/) folder:
 
 | Loader | Target Version | Binary File | Direct Link |
 |:---|:---:|:---|:---:|
-| **Fabric** | Minecraft `1.21.x` / `26.1.2` | `exerion-1.0.7.jar` | [Download Fabric JAR](releases/exerion-1.0.7.jar) |
-| **NeoForge** | Minecraft `1.21.x` / `26.1.2` | `exerion-neoforge-1.0.7.jar` | [Download NeoForge JAR](releases/exerion-neoforge-1.0.7.jar) |
+| **Fabric** | Minecraft `1.21.x` / `26.1.2` | `exerion-1.0.8.jar` | [Download Fabric JAR](releases/exerion-1.0.8.jar) |
+| **NeoForge** | Minecraft `1.21.x` / `26.1.2` | `exerion-neoforge-1.0.8.jar` | [Download NeoForge JAR](releases/exerion-neoforge-1.0.8.jar) |
 
 ---
 
@@ -133,11 +133,11 @@ To advance between eras, craft the **Progression Terminal**, insert the required
 ### Fabric Installation
 1. Install **Fabric Loader** ($\ge 0.19.3$) for Minecraft `1.21.x` / `26.1.2`.
 2. Download the latest **Fabric API**.
-3. Place [`releases/exerion-1.0.7.jar`](releases/exerion-1.0.7.jar) into your `.minecraft/mods/` directory.
+3. Place [`releases/exerion-1.0.8.jar`](releases/exerion-1.0.8.jar) into your `.minecraft/mods/` directory.
 
 ### NeoForge Installation
 1. Install **NeoForge** ($\ge 21.11.3$) for Minecraft `1.21.x` / `26.1.2`.
-2. Place [`releases/exerion-neoforge-1.0.7.jar`](releases/exerion-neoforge-1.0.7.jar) into your `.minecraft/mods/` directory.
+2. Place [`releases/exerion-neoforge-1.0.8.jar`](releases/exerion-neoforge-1.0.8.jar) into your `.minecraft/mods/` directory.
 
 ---
 

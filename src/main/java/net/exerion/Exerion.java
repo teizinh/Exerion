@@ -84,12 +84,16 @@ public class Exerion implements ModInitializer {
             ExerionNetwork.syncEraToClient(handler.getPlayer(), PlayerEraManager.getPlayerEra(handler.getPlayer()))
         );
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            net.exerion.energy.GlobalEnergyNetwork.clear();
             GlobalFluidNetwork.clear();
             FrequencyEnderChestBlockEntity.EnderStorageManager.clear();
             ExerionCrashGuard.clearAll();
         });
 
         ServerTickEvents.START_SERVER_TICK.register(server -> ExerionCrashGuard.safeNetwork("ServerTickEvents.START_SERVER_TICK", () -> {
+            for (net.minecraft.server.level.ServerLevel level : server.getAllLevels()) {
+                net.exerion.energy.GlobalEnergyNetwork.tick(level);
+            }
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
                 if (!helmet.isEmpty() && helmet.getItem() == ModItems.LOGIC_HELMET) {
@@ -107,15 +111,28 @@ public class Exerion implements ModInitializer {
                                 BlockPos targetPos = blockHit.getBlockPos();
                                 BlockEntity be = player.level().getBlockEntity(targetPos);
                                 if (be != null) {
-                                    String msg = null;
-                                    if (be instanceof IEnergyStorage energyStorage) {
-                                        msg = "§b[HUD] " + be.getBlockState().getBlock().getName().getString() + " §7| §eEnergia: §f" + energyStorage.getEnergy() + " / " + energyStorage.getMaxEnergy() + " EU";
-                                    } else if (be instanceof CoalBoilerBlockEntity boiler) {
-                                        boolean isBurning = boiler.getBurnTime() > 0;
-                                        msg = "§b[HUD] Caldeira a Carvão §7| §eCombustão: " + (isBurning ? "§aA Queimar" : "§cDesligada");
+                                    StringBuilder sb = new StringBuilder("§b[HUD] ").append(be.getBlockState().getBlock().getName().getString()).append(" §7|");
+                                    boolean hasData = false;
+                                    if (be instanceof IEnergyStorage energyStorage && !(be instanceof net.exerion.block.entity.CableBlockEntity)) {
+                                        sb.append(" §eEnergia: §f").append(energyStorage.getEnergy()).append(" / ").append(energyStorage.getMaxEnergy()).append(" EU");
+                                        hasData = true;
                                     }
-                                    if (msg != null) {
-                                        player.sendOverlayMessage(Component.literal(msg));
+                                    if (be instanceof net.exerion.mechanical.IFMSource fmSource) {
+                                        sb.append(" §3Torque Gerado: §b").append(fmSource.getOutputFM()).append(" FM");
+                                        hasData = true;
+                                    }
+                                    if (be instanceof net.exerion.mechanical.IFMConsumer fmConsumer) {
+                                        int avail = net.exerion.mechanical.MechanicalNetwork.getAvailableFM(player.level(), targetPos);
+                                        sb.append(" §3Torque: §b").append(avail).append(" / ").append(fmConsumer.getRequiredFM()).append(" FM");
+                                        hasData = true;
+                                    }
+                                    if (be instanceof CoalBoilerBlockEntity boiler) {
+                                        boolean isBurning = boiler.getBurnTime() > 0;
+                                        sb.append(" §eCombustão: ").append(isBurning ? "§aA Queimar" : "§cDesligada");
+                                        hasData = true;
+                                    }
+                                    if (hasData) {
+                                        player.sendOverlayMessage(Component.literal(sb.toString()));
                                     }
                                 }
                             }
