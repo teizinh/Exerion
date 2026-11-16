@@ -29,6 +29,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -76,6 +77,10 @@ public class SwissArmyKnifeItem extends Item {
             }
             return OMNI;
         }
+    }
+
+    private static void sendMessage(Player player, Component msg) {
+        player.displayClientMessage(msg, false);
     }
 
     public SwissArmyKnifeItem(Item.Properties properties) {
@@ -148,7 +153,7 @@ public class SwissArmyKnifeItem extends Item {
 
         if (stack.getDamageValue() >= stack.getMaxDamage()) {
             if (!level.isClientSide()) {
-                player.sendSystemMessage(Component.literal("§c[Canivete Suíço] Sem energia! Recarrega na BatBox ou Peitoral."));
+                sendMessage(player, Component.literal("§c[Canivete Suíço] Sem energia! Recarrega na BatBox ou Peitoral."));
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 0.6f, 1.0f);
             }
             return InteractionResult.FAIL;
@@ -161,19 +166,19 @@ public class SwissArmyKnifeItem extends Item {
             if (!level.isClientSide()) {
                 TechnologyEra required = EraProgressionRegistry.getRequiredEra(state.getBlock());
                 String blockName = Component.translatable(state.getBlock().getDescriptionId()).getString();
-                player.sendSystemMessage(Component.literal("§b=== Diagnóstico Exerion ==="));
-                player.sendSystemMessage(Component.literal("§7Bloco: §f" + blockName));
-                player.sendSystemMessage(Component.literal("§7Era Requerida: §d" + required.getDisplayNameComponent().getString()));
+                sendMessage(player, Component.literal("§b=== Diagnóstico Exerion ==="));
+                sendMessage(player, Component.literal("§7Bloco: §f" + blockName));
+                sendMessage(player, Component.literal("§7Era Requerida: §d" + required.getDisplayNameComponent().getString()));
 
                 BlockEntity be = level.getBlockEntity(pos);
                 if (be instanceof IEnergyStorage energyStorage) {
-                    player.sendSystemMessage(Component.literal("§eEnergia: §6" + energyStorage.getEnergy() + " / " + energyStorage.getMaxEnergy() + " EU"));
+                    sendMessage(player, Component.literal("§eEnergia: §6" + energyStorage.getEnergy() + " / " + energyStorage.getMaxEnergy() + " EU"));
                 }
                 if (be instanceof IFMSource fmSource) {
-                    player.sendSystemMessage(Component.literal("§3Torque Mecânico (Output): §b" + fmSource.getOutputFM() + " FM"));
+                    sendMessage(player, Component.literal("§3Torque Mecânico (Output): §b" + fmSource.getOutputFM() + " FM"));
                 }
                 if (be instanceof IFMConsumer fmConsumer) {
-                    player.sendSystemMessage(Component.literal("§3Torque Requerido: §b" + fmConsumer.getRequiredFM() + " FM"));
+                    sendMessage(player, Component.literal("§3Torque Requerido: §b" + fmConsumer.getRequiredFM() + " FM"));
                 }
 
                 stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 2));
@@ -187,16 +192,25 @@ public class SwissArmyKnifeItem extends Item {
         if (namespace.equals("exerion")) {
             if (!level.isClientSide()) {
                 if (player.isSecondaryUseActive()) {
-                    // Desmontar máquina instantaneamente com drop
-                    level.destroyBlock(pos, true);
-                    player.sendSystemMessage(Component.literal("§a[Canivete Suíço] Máquina desmontada com sucesso!"));
+                    // Desmontar máquina instantaneamente preservando componentes
+                    ItemStack drop = new ItemStack(state.getBlock());
+                    BlockEntity be = level.getBlockEntity(pos);
+                    if (be != null) {
+                        drop.applyComponents(be.collectComponents());
+                    }
+                    level.removeBlock(pos, false);
+                    Block.popResource(level, pos, drop);
+                    sendMessage(player, Component.literal("§a[Canivete Suíço] Máquina desmontada preservando inventário!"));
                     level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.6f, 1.5f);
+                    if (level instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 8, 0.2, 0.2, 0.2, 0.05);
+                    }
                     stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
                 } else if (state.hasProperty(BlockStateProperties.FACING)) {
                     Direction current = state.getValue(BlockStateProperties.FACING);
                     Direction next = Direction.values()[(current.ordinal() + 1) % Direction.values().length];
                     level.setBlock(pos, state.setValue(BlockStateProperties.FACING, next), 3);
-                    player.sendSystemMessage(Component.literal("§b[Canivete Suíço] Orientação: " + next.getName()));
+                    sendMessage(player, Component.literal("§b[Canivete Suíço] Orientação: " + next.getName()));
                     level.playSound(null, pos, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.BLOCKS, 0.8f, 1.2f);
                     stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
                 } else if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
@@ -209,7 +223,7 @@ public class SwissArmyKnifeItem extends Item {
                         default -> Direction.NORTH;
                     };
                     level.setBlock(pos, state.setValue(BlockStateProperties.HORIZONTAL_FACING, next), 3);
-                    player.sendSystemMessage(Component.literal("§b[Canivete Suíço] Orientação: " + next.getName()));
+                    sendMessage(player, Component.literal("§b[Canivete Suíço] Orientação: " + next.getName()));
                     level.playSound(null, pos, SoundEvents.ITEM_FRAME_ROTATE_ITEM, SoundSource.BLOCKS, 0.8f, 1.2f);
                     stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
                 }
@@ -230,7 +244,7 @@ public class SwissArmyKnifeItem extends Item {
                 Mode current = getMode(stack);
                 Mode next = current.next();
                 setMode(stack, next);
-                player.sendSystemMessage(Component.literal("§6[Canivete Suíço] Modo: " + next.getDisplayName()));
+                sendMessage(player, Component.literal("§6[Canivete Suíço] Modo: " + next.getDisplayName()));
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.UI_BUTTON_CLICK, SoundSource.PLAYERS, 0.7f, 1.5f);
             }
             return InteractionResult.SUCCESS;
@@ -241,7 +255,7 @@ public class SwissArmyKnifeItem extends Item {
         if (mode == Mode.SCANNER) {
             if (!level.isClientSide()) {
                 TechnologyEra currentEra = PlayerEraManager.getPlayerEra(player);
-                player.sendSystemMessage(Component.literal("§eA tua Era atual: §d" + currentEra.getDisplayNameComponent().getString()));
+                sendMessage(player, Component.literal("§eA tua Era atual: §d" + currentEra.getDisplayNameComponent().getString()));
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.6f, 1.2f);
             }
             return InteractionResult.SUCCESS;

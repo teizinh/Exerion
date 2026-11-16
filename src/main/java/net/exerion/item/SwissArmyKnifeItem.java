@@ -29,6 +29,7 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -187,10 +188,19 @@ public class SwissArmyKnifeItem extends Item {
         if (namespace.equals("exerion")) {
             if (!level.isClientSide()) {
                 if (player.isSecondaryUseActive()) {
-                    // Desmontar máquina instantaneamente com drop
-                    level.destroyBlock(pos, true);
-                    player.sendSystemMessage(Component.literal("§a[Canivete Suíço] Máquina desmontada com sucesso!"));
+                    // Desmontar máquina instantaneamente preservando componentes
+                    ItemStack drop = new ItemStack(state.getBlock());
+                    BlockEntity be = level.getBlockEntity(pos);
+                    if (be != null) {
+                        drop.applyComponents(be.collectComponents());
+                    }
+                    level.removeBlock(pos, false);
+                    Block.popResource(level, pos, drop);
+                    player.sendSystemMessage(Component.literal("§a[Canivete Suíço] Máquina desmontada preservando inventário!"));
                     level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.6f, 1.5f);
+                    if (level instanceof ServerLevel serverLevel) {
+                        serverLevel.sendParticles(ParticleTypes.ELECTRIC_SPARK, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 8, 0.2, 0.2, 0.2, 0.05);
+                    }
                     stack.setDamageValue(Math.min(stack.getMaxDamage(), stack.getDamageValue() + 1));
                 } else if (state.hasProperty(BlockStateProperties.FACING)) {
                     Direction current = state.getValue(BlockStateProperties.FACING);
