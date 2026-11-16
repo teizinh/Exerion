@@ -3,7 +3,7 @@
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.21%2B%20%2F%2026.1.2-brightgreen.svg?style=for-the-badge&logo=minecraft)](https://minecraft.net)
 [![Mod Loader Fabric](https://img.shields.io/badge/Loader-Fabric-blue.svg?style=for-the-badge&logo=fabric)](https://fabricmc.net)
 [![Mod Loader NeoForge](https://img.shields.io/badge/Loader-NeoForge-orange.svg?style=for-the-badge)](https://neoforged.net)
-[![Release](https://img.shields.io/badge/Release-v1.0.10-purple.svg?style=for-the-badge)](releases/)
+[![Release](https://img.shields.io/badge/Release-v1.1.0-purple.svg?style=for-the-badge)](releases/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 [![Author](https://img.shields.io/badge/Author-Salvador%20%28%40teizinh%29-black.svg?style=for-the-badge&logo=github)](https://github.com/teizinh)
 
@@ -15,7 +15,7 @@ Instead of unlocking all high-tech machines instantaneously, **Exerion introduce
 
 ## 📑 Table of Contents
 - [🌟 Key Highlights](#-key-highlights)
-- [📦 Pre-compiled Downloads (v1.0.4)](#-pre-compiled-downloads-v104)
+- [📦 Pre-compiled Downloads (v1.1.0)](#-pre-compiled-downloads-v110)
 - [🏛️ The 10 Technological Eras](#️-the-10-technological-eras)
 - [⚡ Power & Energy Systems](#-power--energy-systems)
   - [1. Rotational / Kinetic Power](#1-rotational--kinetic-power)
@@ -50,14 +50,14 @@ Instead of unlocking all high-tech machines instantaneously, **Exerion introduce
 
 ---
 
-## 📦 Pre-compiled Downloads (v1.0.11)
+## 📦 Pre-compiled Downloads (v1.1.0)
 
 Both ready-to-play compiled `.jar` binaries are available in the [`releases/`](releases/) folder:
 
 | Loader | Target Version | Binary File | Direct Link |
 |:---|:---:|:---|:---:|
-| **Fabric** | Minecraft `1.21.x` / `26.1.2` | `exerion-1.0.11.jar` | [Download Fabric JAR](releases/exerion-1.0.11.jar) |
-| **NeoForge** | Minecraft `1.21.x` / `26.1.2` | `exerion-neoforge-1.0.11.jar` | [Download NeoForge JAR](releases/exerion-neoforge-1.0.11.jar) |
+| **Fabric** | Minecraft `1.21.x` / `26.1.2` | `exerion-1.1.0.jar` | [Download Fabric JAR](releases/exerion-1.1.0.jar) |
+| **NeoForge** | Minecraft `1.21.x` / `26.1.2` | `exerion-neoforge-1.1.0.jar` | [Download NeoForge JAR](releases/exerion-neoforge-1.1.0.jar) |
 
 ---
 
@@ -139,11 +139,11 @@ To advance between eras, craft the **Progression Terminal**, insert the required
 ### Fabric Installation
 1. Install **Fabric Loader** ($\ge 0.19.3$) for Minecraft `1.21.x` / `26.1.2`.
 2. Download the latest **Fabric API**.
-3. Place [`releases/exerion-1.0.8.jar`](releases/exerion-1.0.8.jar) into your `.minecraft/mods/` directory.
+3. Place [`releases/exerion-1.1.0.jar`](releases/exerion-1.1.0.jar) into your `.minecraft/mods/` directory.
 
 ### NeoForge Installation
 1. Install **NeoForge** ($\ge 21.11.3$) for Minecraft `1.21.x` / `26.1.2`.
-2. Place [`releases/exerion-neoforge-1.0.8.jar`](releases/exerion-neoforge-1.0.8.jar) into your `.minecraft/mods/` directory.
+2. Place [`releases/exerion-neoforge-1.1.0.jar`](releases/exerion-neoforge-1.1.0.jar) into your `.minecraft/mods/` directory.
 
 ---
 
