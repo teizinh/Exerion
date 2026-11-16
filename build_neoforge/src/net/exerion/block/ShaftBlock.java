@@ -23,6 +23,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +51,7 @@ extends BaseEntityBlock {
     }
 
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.INVISIBLE;
     }
 
     @Nullable
@@ -86,6 +90,21 @@ extends BaseEntityBlock {
             return Block.box((double)6.0, (double)6.0, (double)0.0, (double)10.0, (double)10.0, (double)16.0);
         }
         return Block.box((double)6.0, (double)0.0, (double)6.0, (double)10.0, (double)16.0, (double)10.0);
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (world.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        boolean spinning = state.getValue(SPINNING);
+        int availableFM = net.exerion.mechanical.MechanicalNetwork.getAvailableFM(world, pos);
+        if (spinning || availableFM > 0) {
+            player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Eixo: \u00a7aEm rota\u00e7\u00e3o (" + availableFM + " FM dispon\u00edvel)"), true);
+        } else {
+            player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Eixo: \u00a7cParado (0 FM dispon\u00edvel)"), true);
+        }
+        return InteractionResult.SUCCESS;
     }
 }
 

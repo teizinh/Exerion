@@ -21,9 +21,9 @@ public class WaterWheelBlockEntity
 extends BlockEntity
 implements IFMSource {
     private static final Direction[] DIRECTIONS = Direction.values();
-    public static final int FM_OUTPUT = 20;
+    public static final int FM_OUTPUT = 25;
     private boolean hasWater = false;
-    private int checkTimer = 0;
+    private int checkTimer = CHECK_INTERVAL;
     private static final int CHECK_INTERVAL = 20;
     public float visualRotationAngle = 0.0f;
     public static final float ROTATION_SPEED = 4.0f;
@@ -36,6 +36,16 @@ implements IFMSource {
     public void setLevel(Level level) {
         super.setLevel(level);
         if (level != null && !level.isClientSide()) {
+            // Initial water check on placement
+            boolean waterFound = false;
+            for (Direction dir : DIRECTIONS) {
+                BlockPos neighborPos = this.worldPosition.relative(dir);
+                if (level.getFluidState(neighborPos).is(FluidTags.WATER)) {
+                    waterFound = true;
+                    break;
+                }
+            }
+            this.hasWater = waterFound;
             net.exerion.mechanical.GlobalKineticNetwork.registerSource(level, this.worldPosition, this.getOutputFM(), this.isGeneratingFM());
         }
     }

@@ -35,6 +35,9 @@ import net.exerion.client.ProgressionTerminalScreen;
 import net.exerion.client.SolarPanelScreen;
 import net.exerion.client.SteamTurbineScreen;
 
+import net.exerion.client.render.HandCrankRenderer;
+import net.exerion.client.render.ShaftRenderer;
+import net.exerion.client.render.WaterWheelRenderer;
 import net.exerion.item.ModItems;
 import net.exerion.menu.ModMenuTypes;
 import net.minecraft.client.Minecraft;
@@ -78,6 +81,10 @@ public class ExerionClient {
     }
 
     private static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        Exerion.LOGGER.info("Registering Exerion BlockEntityRenderers (Kinetic System)...");
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.HAND_CRANK_ENTITY, HandCrankRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.WATER_WHEEL_ENTITY, WaterWheelRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntityTypes.SHAFT_ENTITY, ShaftRenderer::new);
     }
 
     private static void onClientTick(ClientTickEvent.Pre event) {

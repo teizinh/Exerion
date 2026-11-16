@@ -48,7 +48,7 @@ extends BlockEntity {
                 }
                 return;
             }
-            if (level.getGameTime() % 10L == 0L) {
+            if (level.getGameTime() % 4L == 0L) {
                 boolean anySourceActive = net.exerion.mechanical.GlobalKineticNetwork.isSpinning(level, pos);
                 boolean currentSpin = (Boolean)state.getValue(ShaftBlock.SPINNING);
                 if (currentSpin != anySourceActive) {

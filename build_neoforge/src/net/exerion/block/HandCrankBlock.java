@@ -65,7 +65,7 @@ extends BaseEntityBlock {
     }
 
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.INVISIBLE;
     }
 
     @Nullable
@@ -96,13 +96,19 @@ extends BaseEntityBlock {
             if (player.isShiftKeyDown()) {
                 boolean isBurst = crankBE.toggleMode();
                 world.playSound(null, pos, SoundEvents.COPPER_GRATE_BREAK, SoundSource.BLOCKS, 0.8f, 1.2f);
-                player.sendSystemMessage((Component)Component.literal((String)("\u00a7e[Exerion] Manivela: " + (isBurst ? "\u00a7aModo Rajada (Buffer)" : "\u00a7bModo Cont\u00ednuo (Segurar)"))));
+                player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Manivela: " + (isBurst ? "\u00a7aModo Rajada (Buffer)" : "\u00a7bModo Cont\u00ednuo (Segurar)")), false);
             } else {
                 crankBE.crank(world);
                 world.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.6f, 0.9f);
                 if (world instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel)world;
                     serverLevel.sendParticles((ParticleOptions)ParticleTypes.CRIT, (double)pos.getX() + 0.5, (double)pos.getY() + 0.8, (double)pos.getZ() + 0.5, 3, 0.2, 0.1, 0.2, 0.0);
+                }
+                int rate = crankBE.getOutputFM();
+                if (crankBE.isBurstMode()) {
+                    player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Manivela: \u00a7a" + rate + " FM gerados \u00a77(Buffer: " + crankBE.getFmBuffer() + "/" + crankBE.getMaxBuffer() + ")"), true);
+                } else {
+                    player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Manivela: \u00a7b" + rate + " FM gerados \u00a77(Modo Cont\u00ednuo)"), true);
                 }
             }
         }

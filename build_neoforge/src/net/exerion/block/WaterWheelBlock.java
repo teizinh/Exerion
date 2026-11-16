@@ -5,6 +5,11 @@ import net.exerion.block.entity.ModBlockEntityTypes;
 import net.exerion.block.entity.WaterWheelBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -21,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +64,7 @@ extends BaseEntityBlock {
     }
 
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.INVISIBLE;
     }
 
     @Nullable
@@ -69,6 +75,26 @@ extends BaseEntityBlock {
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
         return WaterWheelBlock.createTickerHelper(type, ModBlockEntityTypes.WATER_WHEEL_ENTITY, (lvl, pos, st, be) -> be.tick(lvl, pos, st));
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (world.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        BlockEntity be = world.getBlockEntity(pos);
+        if (be instanceof WaterWheelBlockEntity wheelBE) {
+            boolean hasWater = wheelBE.hasWater();
+            int output = wheelBE.getOutputFM();
+            if (hasWater) {
+                player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Roda de \u00c1gua: \u00a7aAtiva (" + output + " FM) \u00a77[\u00c1gua detetada]"), true);
+                world.playSound(null, pos, SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1.0f);
+            } else {
+                player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Roda de \u00c1gua: \u00a7cParada (0 FM) \u00a77[Coloca \u00e1gua adjacente]"), true);
+                world.playSound(null, pos, SoundEvents.DISPENSER_FAIL, SoundSource.BLOCKS, 0.5f, 1.2f);
+            }
+        }
+        return InteractionResult.SUCCESS;
     }
 }
 
