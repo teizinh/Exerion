@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,24 @@ extends BaseEntityBlock {
     public static final MapCodec<HandCrankBlock> CODEC = HandCrankBlock.simpleCodec(HandCrankBlock::new);
     public static final BooleanProperty CRANKING = BooleanProperty.create((String)"cranking");
     public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+
+    public enum CrankPart implements StringRepresentable {
+        BASE("base"),
+        HANDLE("handle");
+
+        private final String name;
+
+        private CrankPart(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return this.name;
+        }
+    }
+
+    public static final EnumProperty<CrankPart> PART = EnumProperty.create("part", CrankPart.class);
 
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
@@ -60,20 +79,20 @@ extends BaseEntityBlock {
 
     public HandCrankBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(CRANKING, false)).setValue(FACING, Direction.UP));
+        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(CRANKING, false)).setValue(FACING, Direction.UP)).setValue(PART, CrankPart.BASE));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(new Property[]{CRANKING, FACING});
+        builder.add(new Property[]{CRANKING, FACING, PART});
     }
 
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return (BlockState)this.defaultBlockState().setValue(FACING, context.getClickedFace());
+        return (BlockState)((BlockState)this.defaultBlockState().setValue(FACING, context.getClickedFace())).setValue(PART, CrankPart.BASE);
     }
 
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
+        return RenderShape.MODEL;
     }
 
     @Nullable

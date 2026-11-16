@@ -1,16 +1,108 @@
 {
   "variants": {
-    "cranking=false,facing=down": { "model": "exerion:block/hand_crank", "x": 180 },
-    "cranking=false,facing=east": { "model": "exerion:block/hand_crank", "x": 90, "y": 270 },
-    "cranking=false,facing=north": { "model": "exerion:block/hand_crank", "x": 90, "y": 180 },
-    "cranking=false,facing=south": { "model": "exerion:block/hand_crank", "x": 90 },
-    "cranking=false,facing=up": { "model": "exerion:block/hand_crank" },
-    "cranking=false,facing=west": { "model": "exerion:block/hand_crank", "x": 90, "y": 90 },
-    "cranking=true,facing=down": { "model": "exerion:block/hand_crank", "x": 180 },
-    "cranking=true,facing=east": { "model": "exerion:block/hand_crank", "x": 90, "y": 270 },
-    "cranking=true,facing=north": { "model": "exerion:block/hand_crank", "x": 90, "y": 180 },
-    "cranking=true,facing=south": { "model": "exerion:block/hand_crank", "x": 90 },
-    "cranking=true,facing=up": { "model": "exerion:block/hand_crank" },
-    "cranking=true,facing=west": { "model": "exerion:block/hand_crank", "x": 90, "y": 90 }
+    "cranking=false,facing=up,part=base": {
+      "model": "exerion:block/hand_crank_base"
+    },
+    "cranking=true,facing=up,part=base": {
+      "model": "exerion:block/hand_crank_base"
+    },
+    "cranking=false,facing=down,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 180
+    },
+    "cranking=true,facing=down,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 180
+    },
+    "cranking=false,facing=south,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 90
+    },
+    "cranking=true,facing=south,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 90
+    },
+    "cranking=false,facing=north,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 90,
+      "y": 180
+    },
+    "cranking=true,facing=north,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 90,
+      "y": 180
+    },
+    "cranking=false,facing=west,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 90,
+      "y": 90
+    },
+    "cranking=true,facing=west,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 90,
+      "y": 90
+    },
+    "cranking=false,facing=east,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 90,
+      "y": 270
+    },
+    "cranking=true,facing=east,part=base": {
+      "model": "exerion:block/hand_crank_base",
+      "x": 90,
+      "y": 270
+    },
+    "cranking=false,facing=up,part=handle": {
+      "model": "exerion:block/hand_crank_handle"
+    },
+    "cranking=true,facing=up,part=handle": {
+      "model": "exerion:block/hand_crank_handle"
+    },
+    "cranking=false,facing=down,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 180
+    },
+    "cranking=true,facing=down,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 180
+    },
+    "cranking=false,facing=south,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 90
+    },
+    "cranking=true,facing=south,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 90
+    },
+    "cranking=false,facing=north,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 90,
+      "y": 180
+    },
+    "cranking=true,facing=north,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 90,
+      "y": 180
+    },
+    "cranking=false,facing=west,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 90,
+      "y": 90
+    },
+    "cranking=true,facing=west,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 90,
+      "y": 90
+    },
+    "cranking=false,facing=east,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 90,
+      "y": 270
+    },
+    "cranking=true,facing=east,part=handle": {
+      "model": "exerion:block/hand_crank_handle",
+      "x": 90,
+      "y": 270
+    }
   }
 }

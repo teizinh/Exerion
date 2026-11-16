@@ -1,0 +1,40 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "all": "exerion:block/hand_crank",
+    "particle": "exerion:block/hand_crank"
+  },
+  "elements": [
+    { "from": [5, 8, 5], "to": [11, 10, 11],
+      "faces": {
+        "up":    {"texture": "#all", "uv": [5,5,11,11]},
+        "down":  {"texture": "#all", "uv": [5,5,11,11]},
+        "north": {"texture": "#all", "uv": [5,8,11,10]},
+        "south": {"texture": "#all", "uv": [5,8,11,10]},
+        "east":  {"texture": "#all", "uv": [5,8,11,10]},
+        "west":  {"texture": "#all", "uv": [5,8,11,10]}
+      }
+    },
+    { "from": [7, 10, 2], "to": [9, 12, 14],
+      "faces": {
+        "up":    {"texture": "#all", "uv": [7,2,9,14]},
+        "down":  {"texture": "#all", "uv": [7,2,9,14]},
+        "north": {"texture": "#all", "uv": [7,10,9,12]},
+        "south": {"texture": "#all", "uv": [7,10,9,12]},
+        "east":  {"texture": "#all", "uv": [2,10,14,12]},
+        "west":  {"texture": "#all", "uv": [2,10,14,12]}
+      }
+    },
+    { "from": [6, 12, 2], "to": [10, 16, 4],
+      "faces": {
+        "up":    {"texture": "#all", "uv": [6,2,10,4]},
+        "down":  {"texture": "#all", "uv": [6,2,10,4]},
+        "north": {"texture": "#all", "uv": [6,12,10,16]},
+        "south": {"texture": "#all", "uv": [6,12,10,16]},
+        "east":  {"texture": "#all", "uv": [2,12,4,16]},
+        "west":  {"texture": "#all", "uv": [2,12,4,16]}
+      }
+    }
+  ]
+}

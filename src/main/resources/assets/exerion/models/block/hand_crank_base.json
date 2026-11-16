@@ -1,0 +1,29 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "all": "exerion:block/hand_crank",
+    "particle": "exerion:block/hand_crank"
+  },
+  "elements": [
+    { "from": [4, 0, 4], "to": [12, 2, 12],
+      "faces": {
+        "down":  {"texture": "#all", "uv": [4,4,12,12]},
+        "up":    {"texture": "#all", "uv": [4,4,12,12]},
+        "north": {"texture": "#all", "uv": [4,0,12,2]},
+        "south": {"texture": "#all", "uv": [4,0,12,2]},
+        "east":  {"texture": "#all", "uv": [4,0,12,2]},
+        "west":  {"texture": "#all", "uv": [4,0,12,2]}
+      }
+    },
+    { "from": [6, 2, 6], "to": [10, 8, 10],
+      "faces": {
+        "up":    {"texture": "#all", "uv": [6,6,10,10]},
+        "north": {"texture": "#all", "uv": [6,2,10,8]},
+        "south": {"texture": "#all", "uv": [6,2,10,8]},
+        "east":  {"texture": "#all", "uv": [6,2,10,8]},
+        "west":  {"texture": "#all", "uv": [6,2,10,8]}
+      }
+    }
+  ]
+}

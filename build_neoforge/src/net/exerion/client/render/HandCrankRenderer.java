@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 public class HandCrankRenderer implements BlockEntityRenderer<HandCrankBlockEntity, HandCrankRenderer.HandCrankRenderState> {
@@ -66,8 +67,9 @@ public class HandCrankRenderer implements BlockEntityRenderer<HandCrankBlockEnti
             poseStack.mulPose(Axis.YP.rotationDegrees(angle));
         }
         poseStack.translate(-0.5, -0.5, -0.5);
-        BlockStateModel model = this.blockRenderer.getBlockModel(renderState.blockState);
-        RenderType renderType = ItemBlockRenderTypes.getRenderType(renderState.blockState);
+        BlockState handleState = renderState.blockState.hasProperty(HandCrankBlock.PART) ? (net.minecraft.world.level.block.state.BlockState)renderState.blockState.setValue(HandCrankBlock.PART, HandCrankBlock.CrankPart.HANDLE) : renderState.blockState;
+        BlockStateModel model = this.blockRenderer.getBlockModel(handleState);
+        RenderType renderType = ItemBlockRenderTypes.getRenderType(handleState);
         if (model != null && renderType != null) {
             collector.submitBlockModel(poseStack, renderType, model, 1.0f, 1.0f, 1.0f, renderState.lightCoords, OverlayTexture.NO_OVERLAY, 0);
         }
