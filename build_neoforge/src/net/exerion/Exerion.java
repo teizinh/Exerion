@@ -133,6 +133,7 @@ public class Exerion {
 
     private void onServerStopping(ServerStoppingEvent event) {
         net.exerion.energy.GlobalEnergyNetwork.clear();
+        net.exerion.mechanical.GlobalKineticNetwork.clear();
         GlobalFluidNetwork.clear();
         FrequencyEnderChestBlockEntity.EnderStorageManager.clear();
         ExerionCrashGuard.clearAll();

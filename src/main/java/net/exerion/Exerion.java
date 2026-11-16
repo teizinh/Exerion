@@ -85,6 +85,7 @@ public class Exerion implements ModInitializer {
         );
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             net.exerion.energy.GlobalEnergyNetwork.clear();
+            net.exerion.mechanical.GlobalKineticNetwork.clear();
             GlobalFluidNetwork.clear();
             FrequencyEnderChestBlockEntity.EnderStorageManager.clear();
             ExerionCrashGuard.clearAll();

@@ -4,6 +4,7 @@ use jni::JNIEnv;
 use std::panic::catch_unwind;
 
 use crate::grid::{BlockPos, DeviceType, EnergyNetworkManager};
+use crate::kinetic::{Axis, KineticNetworkManager};
 
 #[no_mangle]
 pub extern "system" fn Java_net_exerion_energy_RustGridEngine_createNetwork(
@@ -257,4 +258,232 @@ pub extern "system" fn Java_net_exerion_energy_RustGridEngine_solveTick(
         }
         Err(_) => std::ptr::null_mut(),
     }
+}
+
+// -------------------------------------------------------------
+// KINETIC / MECHANICAL JNI BINDINGS
+// -------------------------------------------------------------
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_createKineticNetwork(
+    _env: JNIEnv,
+    _class: JClass,
+) -> jlong {
+    let result = catch_unwind(|| {
+        let manager = Box::new(KineticNetworkManager::new());
+        Box::into_raw(manager) as jlong
+    });
+    result.unwrap_or(0)
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_destroyKineticNetwork(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+) {
+    if handle == 0 {
+        return;
+    }
+    let _ = catch_unwind(|| unsafe {
+        let _ = Box::from_raw(handle as *mut KineticNetworkManager);
+    });
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_addShaft(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+    axis_ord: jint,
+) {
+    if handle == 0 {
+        return;
+    }
+    let _ = catch_unwind(|| unsafe {
+        let manager = &mut *(handle as *mut KineticNetworkManager);
+        manager.add_shaft(BlockPos::new(x, y, z), Axis::from_i32(axis_ord));
+    });
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_removeShaft(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+) {
+    if handle == 0 {
+        return;
+    }
+    let _ = catch_unwind(|| unsafe {
+        let manager = &mut *(handle as *mut KineticNetworkManager);
+        manager.remove_shaft(BlockPos::new(x, y, z));
+    });
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_registerSource(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+    output_fm: jint,
+    is_generating: jboolean,
+) {
+    if handle == 0 {
+        return;
+    }
+    let _ = catch_unwind(|| unsafe {
+        let manager = &mut *(handle as *mut KineticNetworkManager);
+        manager.register_source(
+            BlockPos::new(x, y, z),
+            output_fm.max(0) as u32,
+            is_generating == JNI_TRUE,
+        );
+    });
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_updateSource(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+    output_fm: jint,
+    is_generating: jboolean,
+) {
+    if handle == 0 {
+        return;
+    }
+    let _ = catch_unwind(|| unsafe {
+        let manager = &mut *(handle as *mut KineticNetworkManager);
+        manager.update_source(
+            BlockPos::new(x, y, z),
+            output_fm.max(0) as u32,
+            is_generating == JNI_TRUE,
+        );
+    });
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_removeSource(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+) {
+    if handle == 0 {
+        return;
+    }
+    let _ = catch_unwind(|| unsafe {
+        let manager = &mut *(handle as *mut KineticNetworkManager);
+        manager.remove_source(BlockPos::new(x, y, z));
+    });
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_registerConsumer(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+    required_fm: jint,
+) {
+    if handle == 0 {
+        return;
+    }
+    let _ = catch_unwind(|| unsafe {
+        let manager = &mut *(handle as *mut KineticNetworkManager);
+        manager.register_consumer(BlockPos::new(x, y, z), required_fm.max(0) as u32);
+    });
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_removeConsumer(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+) {
+    if handle == 0 {
+        return;
+    }
+    let _ = catch_unwind(|| unsafe {
+        let manager = &mut *(handle as *mut KineticNetworkManager);
+        manager.remove_consumer(BlockPos::new(x, y, z));
+    });
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_isSpinning(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+) -> jboolean {
+    if handle == 0 {
+        return 0;
+    }
+    let result = catch_unwind(|| unsafe {
+        let manager = &*(handle as *const KineticNetworkManager);
+        if manager.is_spinning(&BlockPos::new(x, y, z)) {
+            1
+        } else {
+            0
+        }
+    });
+    result.unwrap_or(0)
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_getAvailableFM(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+    x: jint,
+    y: jint,
+    z: jint,
+) -> jint {
+    if handle == 0 {
+        return 0;
+    }
+    let result = catch_unwind(|| unsafe {
+        let manager = &*(handle as *const KineticNetworkManager);
+        manager.get_available_fm(&BlockPos::new(x, y, z)) as jint
+    });
+    result.unwrap_or(0)
+}
+
+#[no_mangle]
+pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_getShaftCount(
+    _env: JNIEnv,
+    _class: JClass,
+    handle: jlong,
+) -> jint {
+    if handle == 0 {
+        return 0;
+    }
+    let result = catch_unwind(|| unsafe {
+        let manager = &*(handle as *const KineticNetworkManager);
+        manager.shaft_count() as jint
+    });
+    result.unwrap_or(0)
 }

@@ -32,6 +32,22 @@ implements IFMSource {
         super(ModBlockEntityTypes.WATER_WHEEL_ENTITY, pos, state);
     }
 
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (level != null && !level.isClientSide()) {
+            net.exerion.mechanical.GlobalKineticNetwork.registerSource(level, this.worldPosition, this.getOutputFM(), this.isGeneratingFM());
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level != null && !this.level.isClientSide()) {
+            net.exerion.mechanical.GlobalKineticNetwork.removeSource(this.level, this.worldPosition);
+        }
+    }
+
     public boolean hasWater() {
         return this.hasWater;
     }
@@ -67,6 +83,7 @@ implements IFMSource {
                 if (this.hasWater != waterFound) {
                     this.hasWater = waterFound;
                     this.setChanged();
+                    net.exerion.mechanical.GlobalKineticNetwork.updateSource(level, pos, this.getOutputFM(), this.isGeneratingFM());
                     boolean currentSpin = (Boolean)state.getValue(WaterWheelBlock.SPINNING);
                     if (currentSpin != this.hasWater) {
                         level.setBlock(pos, (BlockState)state.setValue(WaterWheelBlock.SPINNING, this.hasWater), 3);

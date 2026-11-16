@@ -19,6 +19,27 @@ extends BlockEntity {
         super(ModBlockEntityTypes.SHAFT_ENTITY, pos, state);
     }
 
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (level != null && !level.isClientSide()) {
+            net.minecraft.core.Direction.Axis axis = net.minecraft.core.Direction.Axis.Y;
+            BlockState state = this.getBlockState();
+            if (state != null && state.hasProperty(ShaftBlock.AXIS)) {
+                axis = state.getValue(ShaftBlock.AXIS);
+            }
+            net.exerion.mechanical.GlobalKineticNetwork.addShaft(level, this.worldPosition, axis);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level != null && !this.level.isClientSide()) {
+            net.exerion.mechanical.GlobalKineticNetwork.removeShaft(this.level, this.worldPosition);
+        }
+    }
+
     public void tick(Level level, BlockPos pos, BlockState state) {
         ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
             if (level.isClientSide()) {
@@ -28,7 +49,7 @@ extends BlockEntity {
                 return;
             }
             if (level.getGameTime() % 10L == 0L) {
-                boolean anySourceActive = MechanicalNetwork.hasActiveSource(level, pos);
+                boolean anySourceActive = net.exerion.mechanical.GlobalKineticNetwork.isSpinning(level, pos);
                 boolean currentSpin = (Boolean)state.getValue(ShaftBlock.SPINNING);
                 if (currentSpin != anySourceActive) {
                     level.setBlock(pos, (BlockState)state.setValue(ShaftBlock.SPINNING, anySourceActive), 3);

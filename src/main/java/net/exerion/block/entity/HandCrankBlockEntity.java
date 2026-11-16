@@ -28,10 +28,29 @@ implements IFMSource {
         super(ModBlockEntityTypes.HAND_CRANK_ENTITY, pos, state);
     }
 
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (level != null && !level.isClientSide()) {
+            net.exerion.mechanical.GlobalKineticNetwork.registerSource(level, this.worldPosition, this.getOutputFM(), this.isGeneratingFM());
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level != null && !this.level.isClientSide()) {
+            net.exerion.mechanical.GlobalKineticNetwork.removeSource(this.level, this.worldPosition);
+        }
+    }
+
     public boolean toggleMode() {
         this.isBurstMode = !this.isBurstMode;
         this.fmBuffer = 0;
         this.setChanged();
+        if (this.level != null && !this.level.isClientSide()) {
+            net.exerion.mechanical.GlobalKineticNetwork.updateSource(this.level, this.worldPosition, this.getOutputFM(), this.isGeneratingFM());
+        }
         return this.isBurstMode;
     }
 
@@ -46,6 +65,9 @@ implements IFMSource {
             this.lastCrankTime = level.getGameTime();
         }
         this.setChanged();
+        if (level != null && !level.isClientSide()) {
+            net.exerion.mechanical.GlobalKineticNetwork.updateSource(level, this.worldPosition, this.getOutputFM(), this.isGeneratingFM());
+        }
     }
 
     public int getFmBuffer() {
@@ -91,6 +113,7 @@ implements IFMSource {
             boolean wasCranking = (Boolean)state.getValue(HandCrankBlock.CRANKING);
             if (wasCranking != isGenerating) {
                 level.setBlock(pos, (BlockState)state.setValue(HandCrankBlock.CRANKING, isGenerating), 3);
+                net.exerion.mechanical.GlobalKineticNetwork.updateSource(level, pos, this.getOutputFM(), isGenerating);
             }
         });
     }
