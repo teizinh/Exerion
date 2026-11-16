@@ -78,6 +78,17 @@ extends BaseEntityBlock {
     }
 
     @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, @Nullable net.minecraft.world.level.redstone.Orientation orientation, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
+        if (!level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof WaterWheelBlockEntity wheelBE) {
+                wheelBE.triggerWaterCheck(level, pos, state);
+            }
+        }
+    }
+
+    @Override
     protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (world.isClientSide()) {
             return InteractionResult.SUCCESS;

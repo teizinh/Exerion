@@ -21,10 +21,10 @@ public class WaterWheelBlockEntity
 extends BlockEntity
 implements IFMSource {
     private static final Direction[] DIRECTIONS = Direction.values();
-    public static final int FM_OUTPUT = 20;
+    public static final int FM_OUTPUT = 25;
     private boolean hasWater = false;
-    private int checkTimer = 0;
-    private static final int CHECK_INTERVAL = 20;
+    private int checkTimer = CHECK_INTERVAL;
+    private static final int CHECK_INTERVAL = 10;
     public float visualRotationAngle = 0.0f;
     public static final float ROTATION_SPEED = 4.0f;
 
@@ -36,6 +36,7 @@ implements IFMSource {
     public void setLevel(Level level) {
         super.setLevel(level);
         if (level != null && !level.isClientSide()) {
+            this.checkTimer = CHECK_INTERVAL;
             net.exerion.mechanical.GlobalKineticNetwork.registerSource(level, this.worldPosition, this.getOutputFM(), this.isGeneratingFM());
         }
     }
@@ -62,6 +63,37 @@ implements IFMSource {
         return this.hasWater;
     }
 
+    private boolean checkWaterAround(Level level, BlockPos pos) {
+        for (Direction dir : DIRECTIONS) {
+            if (level.getFluidState(pos.relative(dir)).is(FluidTags.WATER)) {
+                return true;
+            }
+        }
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (level.getFluidState(pos.offset(dx, -1, dz)).is(FluidTags.WATER)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void triggerWaterCheck(Level level, BlockPos pos, BlockState state) {
+        if (level == null || level.isClientSide()) return;
+        boolean waterFound = this.checkWaterAround(level, pos);
+        boolean currentSpin = state.hasProperty(WaterWheelBlock.SPINNING) && (Boolean)state.getValue(WaterWheelBlock.SPINNING);
+
+        if (this.hasWater != waterFound || currentSpin != waterFound) {
+            this.hasWater = waterFound;
+            this.setChanged();
+            net.exerion.mechanical.GlobalKineticNetwork.updateSource(level, pos, this.getOutputFM(), this.isGeneratingFM());
+            if (currentSpin != waterFound) {
+                level.setBlock(pos, (BlockState)state.setValue(WaterWheelBlock.SPINNING, waterFound), 3);
+            }
+        }
+    }
+
     public void tick(Level level, BlockPos pos, BlockState state) {
         ExerionCrashGuard.safeTick(level, pos, state, this, () -> {
             if (level.isClientSide()) {
@@ -73,25 +105,10 @@ implements IFMSource {
             ++this.checkTimer;
             if (this.checkTimer >= CHECK_INTERVAL) {
                 this.checkTimer = 0;
-                boolean waterFound = false;
-                for (Direction dir : DIRECTIONS) {
-                    BlockPos neighborPos = pos.relative(dir);
-                    if (!level.getFluidState(neighborPos).is(FluidTags.WATER)) continue;
-                    waterFound = true;
-                    break;
-                }
-                if (this.hasWater != waterFound) {
-                    this.hasWater = waterFound;
-                    this.setChanged();
-                    net.exerion.mechanical.GlobalKineticNetwork.updateSource(level, pos, this.getOutputFM(), this.isGeneratingFM());
-                    boolean currentSpin = (Boolean)state.getValue(WaterWheelBlock.SPINNING);
-                    if (currentSpin != this.hasWater) {
-                        level.setBlock(pos, (BlockState)state.setValue(WaterWheelBlock.SPINNING, this.hasWater), 3);
-                    }
-                    if (this.hasWater && level instanceof ServerLevel) {
-                        ServerLevel serverLevel = (ServerLevel)level;
-                        serverLevel.sendParticles((ParticleOptions)ParticleTypes.SPLASH, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, 8, 0.4, 0.2, 0.4, 0.0);
-                    }
+                this.triggerWaterCheck(level, pos, state);
+                if (this.hasWater && level instanceof ServerLevel) {
+                    ServerLevel serverLevel = (ServerLevel)level;
+                    serverLevel.sendParticles((ParticleOptions)ParticleTypes.SPLASH, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, 8, 0.4, 0.2, 0.4, 0.0);
                 }
             }
         });
