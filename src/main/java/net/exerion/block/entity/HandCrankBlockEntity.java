@@ -32,6 +32,11 @@ implements IFMSource {
     public void setLevel(Level level) {
         super.setLevel(level);
         if (level != null && !level.isClientSide()) {
+            this.fmBuffer = 0;
+            BlockState state = this.getBlockState();
+            if (state != null && state.hasProperty(HandCrankBlock.CRANKING) && state.getValue(HandCrankBlock.CRANKING)) {
+                level.setBlock(this.worldPosition, (BlockState)state.setValue(HandCrankBlock.CRANKING, false), 3);
+            }
             net.exerion.mechanical.GlobalKineticNetwork.registerSource(level, this.worldPosition, this.getOutputFM(), this.isGeneratingFM());
         }
     }

@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -40,28 +41,54 @@ public class HandCrankBlock
 extends BaseEntityBlock {
     public static final MapCodec<HandCrankBlock> CODEC = HandCrankBlock.simpleCodec(HandCrankBlock::new);
     public static final BooleanProperty CRANKING = BooleanProperty.create((String)"cranking");
-    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
+
+    public enum CrankPart implements StringRepresentable {
+        BASE("base"),
+        HANDLE("handle");
+
+        private final String name;
+
+        private CrankPart(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return this.name;
+        }
+    }
+
+    public static final EnumProperty<CrankPart> PART = EnumProperty.create("part", CrankPart.class);
 
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Block.box((double)2.0, (double)0.0, (double)2.0, (double)14.0, (double)16.0, (double)14.0);
+        Direction facing = (Direction)state.getValue(FACING);
+        return switch (facing) {
+            case UP -> Block.box((double)2.0, (double)0.0, (double)2.0, (double)14.0, (double)16.0, (double)14.0);
+            case DOWN -> Block.box((double)2.0, (double)0.0, (double)2.0, (double)14.0, (double)16.0, (double)14.0);
+            case NORTH -> Block.box((double)2.0, (double)2.0, (double)0.0, (double)14.0, (double)14.0, (double)16.0);
+            case SOUTH -> Block.box((double)2.0, (double)2.0, (double)0.0, (double)14.0, (double)14.0, (double)16.0);
+            case WEST -> Block.box((double)0.0, (double)2.0, (double)2.0, (double)16.0, (double)14.0, (double)14.0);
+            case EAST -> Block.box((double)0.0, (double)2.0, (double)2.0, (double)16.0, (double)14.0, (double)14.0);
+        };
     }
 
     public HandCrankBlock(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(CRANKING, false)).setValue(FACING, Direction.NORTH));
+        this.registerDefaultState((BlockState)((BlockState)((BlockState)((BlockState)this.stateDefinition.any()).setValue(CRANKING, false)).setValue(FACING, Direction.UP)).setValue(PART, CrankPart.BASE));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(new Property[]{CRANKING, FACING});
+        builder.add(new Property[]{CRANKING, FACING, PART});
     }
 
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return (BlockState)this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return (BlockState)((BlockState)this.defaultBlockState().setValue(FACING, context.getClickedFace())).setValue(PART, CrankPart.BASE);
     }
 
     public RenderShape getRenderShape(BlockState state) {
@@ -96,13 +123,24 @@ extends BaseEntityBlock {
             if (player.isShiftKeyDown()) {
                 boolean isBurst = crankBE.toggleMode();
                 world.playSound(null, pos, SoundEvents.COPPER_GRATE_BREAK, SoundSource.BLOCKS, 0.8f, 1.2f);
-                player.sendSystemMessage((Component)Component.literal((String)("\u00a7e[Exerion] Manivela: " + (isBurst ? "\u00a7aModo Rajada (Buffer)" : "\u00a7bModo Cont\u00ednuo (Segurar)"))));
+                player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Manivela: " + (isBurst ? "\u00a7aModo Rajada (Buffer)" : "\u00a7bModo Cont\u00ednuo (Segurar)")), false);
             } else {
                 crankBE.crank(world);
                 world.playSound(null, pos, SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.6f, 0.9f);
                 if (world instanceof ServerLevel) {
                     ServerLevel serverLevel = (ServerLevel)world;
-                    serverLevel.sendParticles((ParticleOptions)ParticleTypes.CRIT, (double)pos.getX() + 0.5, (double)pos.getY() + 0.8, (double)pos.getZ() + 0.5, 3, 0.2, 0.1, 0.2, 0.0);
+                    BlockState bState = world.getBlockState(pos);
+                    Direction facing = bState.hasProperty(FACING) ? (Direction)bState.getValue(FACING) : Direction.UP;
+                    double px = (double)pos.getX() + 0.5 + (double)facing.getStepX() * 0.4;
+                    double py = (double)pos.getY() + 0.5 + (double)facing.getStepY() * 0.4;
+                    double pz = (double)pos.getZ() + 0.5 + (double)facing.getStepZ() * 0.4;
+                    serverLevel.sendParticles((ParticleOptions)ParticleTypes.CRIT, px, py, pz, 3, 0.1, 0.1, 0.1, 0.0);
+                }
+                int rate = crankBE.getOutputFM();
+                if (crankBE.isBurstMode()) {
+                    player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Manivela: \u00a7a" + rate + " FM gerados \u00a77(Buffer: " + crankBE.getFmBuffer() + "/" + crankBE.getMaxBuffer() + ")"), true);
+                } else {
+                    player.displayClientMessage((Component)Component.literal("\u00a7e[Exerion] Manivela: \u00a7b" + rate + " FM gerados \u00a77(Modo Cont\u00ednuo)"), true);
                 }
             }
         }

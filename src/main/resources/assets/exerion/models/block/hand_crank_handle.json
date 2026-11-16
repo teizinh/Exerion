@@ -6,34 +6,40 @@
     "particle": "exerion:block/hand_crank"
   },
   "elements": [
-    { "from": [5, 8, 5], "to": [11, 10, 11],
+    {
+      "from": [6, 11, 6],
+      "to": [10, 13, 10],
       "faces": {
-        "up":    {"texture": "#all", "uv": [5,5,11,11]},
-        "down":  {"texture": "#all", "uv": [5,5,11,11]},
-        "north": {"texture": "#all", "uv": [5,8,11,10]},
-        "south": {"texture": "#all", "uv": [5,8,11,10]},
-        "east":  {"texture": "#all", "uv": [5,8,11,10]},
-        "west":  {"texture": "#all", "uv": [5,8,11,10]}
+        "up":    {"texture": "#all", "uv": [6, 6, 10, 10]},
+        "down":  {"texture": "#all", "uv": [6, 6, 10, 10]},
+        "north": {"texture": "#all", "uv": [6, 6, 10, 8]},
+        "south": {"texture": "#all", "uv": [6, 6, 10, 8]},
+        "east":  {"texture": "#all", "uv": [6, 6, 10, 8]},
+        "west":  {"texture": "#all", "uv": [6, 6, 10, 8]}
       }
     },
-    { "from": [7, 10, 2], "to": [9, 12, 14],
+    {
+      "from": [7, 11, 2],
+      "to": [9, 13, 6],
       "faces": {
-        "up":    {"texture": "#all", "uv": [7,2,9,14]},
-        "down":  {"texture": "#all", "uv": [7,2,9,14]},
-        "north": {"texture": "#all", "uv": [7,10,9,12]},
-        "south": {"texture": "#all", "uv": [7,10,9,12]},
-        "east":  {"texture": "#all", "uv": [2,10,14,12]},
-        "west":  {"texture": "#all", "uv": [2,10,14,12]}
+        "up":    {"texture": "#all", "uv": [7, 6, 9, 10]},
+        "down":  {"texture": "#all", "uv": [7, 6, 9, 10]},
+        "north": {"texture": "#all", "uv": [7, 6, 9, 8]},
+        "south": {"texture": "#all", "uv": [7, 6, 9, 8]},
+        "east":  {"texture": "#all", "uv": [2, 6, 6, 8]},
+        "west":  {"texture": "#all", "uv": [2, 6, 6, 8]}
       }
     },
-    { "from": [6, 12, 2], "to": [10, 16, 4],
+    {
+      "from": [6, 13, 2],
+      "to": [10, 16, 4],
       "faces": {
-        "up":    {"texture": "#all", "uv": [6,2,10,4]},
-        "down":  {"texture": "#all", "uv": [6,2,10,4]},
-        "north": {"texture": "#all", "uv": [6,12,10,16]},
-        "south": {"texture": "#all", "uv": [6,12,10,16]},
-        "east":  {"texture": "#all", "uv": [2,12,4,16]},
-        "west":  {"texture": "#all", "uv": [2,12,4,16]}
+        "up":    {"texture": "#all", "uv": [6, 2, 10, 4]},
+        "down":  {"texture": "#all", "uv": [6, 2, 10, 4]},
+        "north": {"texture": "#all", "uv": [6, 2, 10, 5]},
+        "south": {"texture": "#all", "uv": [6, 2, 10, 5]},
+        "east":  {"texture": "#all", "uv": [2, 2, 4, 5]},
+        "west":  {"texture": "#all", "uv": [2, 2, 4, 5]}
       }
     }
   ]
