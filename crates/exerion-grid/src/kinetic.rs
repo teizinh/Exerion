@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 use crate::grid::BlockPos;
+use crate::watchdog::Watchdog;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Axis {
@@ -97,6 +98,7 @@ pub struct KineticNetworkManager {
     consumers: HashMap<BlockPos, KineticConsumerNode>,
     networks: HashMap<u32, KineticNetwork>,
     next_network_id: u32,
+    pub watchdog: Watchdog,
 }
 
 impl KineticNetworkManager {
@@ -107,6 +109,7 @@ impl KineticNetworkManager {
             consumers: HashMap::new(),
             networks: HashMap::new(),
             next_network_id: 1,
+            watchdog: Watchdog::default(),
         }
     }
 
@@ -447,8 +450,11 @@ impl KineticNetworkManager {
     }
 
     /// O(1) instantaneous check whether a shaft or source is spinning
-    pub fn is_spinning(&self, pos: &BlockPos) -> bool {
+    pub fn is_spinning(&mut self, pos: &BlockPos) -> bool {
         if let Some(sh) = self.shafts.get(pos) {
+            if self.watchdog.check_network(sh.network_id) {
+                return false; // Circuit breaker active
+            }
             if let Some(net) = self.networks.get(&sh.network_id) {
                 return net.is_spinning;
             }
@@ -460,7 +466,7 @@ impl KineticNetworkManager {
     }
 
     /// O(1) lookup of available FM reaching a consumer machine with distance loss
-    pub fn get_available_fm(&self, consumer_pos: &BlockPos) -> u32 {
+    pub fn get_available_fm(&mut self, consumer_pos: &BlockPos) -> u32 {
         let mut total_effective: u32 = 0;
         let mut counted_sources: HashSet<BlockPos> = HashSet::new();
 
@@ -490,6 +496,11 @@ impl KineticNetworkManager {
         }
 
         for nid in nids {
+            if self.watchdog.check_network(nid) {
+                // Circuit breaker active: skip this network
+                continue;
+            }
+
             if let Some(net) = self.networks.get(&nid) {
                 if net.is_spinning && net.total_generated_fm > 0 {
                     for s_pos in &net.sources {

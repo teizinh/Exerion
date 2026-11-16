@@ -1,5 +1,6 @@
 use std::collections::{HashMap, HashSet, VecDeque};
 use crate::solver::{Solver, TickResults};
+use crate::watchdog::Watchdog;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct BlockPos {
@@ -93,6 +94,7 @@ pub struct EnergyNetworkManager {
     devices: HashMap<BlockPos, DeviceNode>,
     grids: HashMap<u32, Grid>,
     next_grid_id: u32,
+    pub watchdog: Watchdog,
 }
 
 impl EnergyNetworkManager {
@@ -102,6 +104,7 @@ impl EnergyNetworkManager {
             devices: HashMap::new(),
             grids: HashMap::new(),
             next_grid_id: 1,
+            watchdog: Watchdog::default(),
         }
     }
 
@@ -370,7 +373,19 @@ impl EnergyNetworkManager {
     pub fn solve_tick(&mut self) -> TickResults {
         let mut results = TickResults::new();
 
-        for grid in self.grids.values() {
+        let grid_ids: Vec<u32> = self.grids.keys().copied().collect();
+
+        for gid in grid_ids {
+            if self.watchdog.check_network(gid) {
+                // Circuit breaker is active: isolate this grid to prevent server freeze/crash
+                continue;
+            }
+
+            let grid = match self.grids.get(&gid) {
+                Some(g) => g,
+                None => continue,
+            };
+
             let mut sources: Vec<(BlockPos, &DeviceNode)> = Vec::new();
             let mut sinks: Vec<(BlockPos, &DeviceNode)> = Vec::new();
 
@@ -383,7 +398,16 @@ impl EnergyNetworkManager {
                 }
             }
 
+            let start = std::time::Instant::now();
             Solver::solve_component(&sources, &sinks, &mut results);
+            let elapsed = start.elapsed();
+
+            if elapsed > std::time::Duration::from_millis(20) {
+                self.watchdog.trip_network(
+                    gid,
+                    &format!("Energy grid {} solve_component took {:?}", gid, elapsed),
+                );
+            }
         }
 
         results

@@ -443,7 +443,7 @@ pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_isSpinning(
         return 0;
     }
     let result = catch_unwind(|| unsafe {
-        let manager = &*(handle as *const KineticNetworkManager);
+        let manager = &mut *(handle as *mut KineticNetworkManager);
         if manager.is_spinning(&BlockPos::new(x, y, z)) {
             1
         } else {
@@ -466,7 +466,7 @@ pub extern "system" fn Java_net_exerion_mechanical_RustKineticEngine_getAvailabl
         return 0;
     }
     let result = catch_unwind(|| unsafe {
-        let manager = &*(handle as *const KineticNetworkManager);
+        let manager = &mut *(handle as *mut KineticNetworkManager);
         manager.get_available_fm(&BlockPos::new(x, y, z)) as jint
     });
     result.unwrap_or(0)

@@ -1,13 +1,20 @@
 package net.exerion.energy;
 
 public interface IEnergyStorage {
-    public int getEnergy();
+    int getEnergy();
+    int getMaxEnergy();
+    void setEnergy(int energy);
 
-    public int getMaxEnergy();
+    default boolean canReceive() {
+        return true;
+    }
 
-    public void setEnergy(int var1);
+    default boolean canExtract() {
+        return true;
+    }
 
-    default public int receiveEnergy(int maxReceive, boolean simulate) {
+    default int receiveEnergy(int maxReceive, boolean simulate) {
+        if (!canReceive() || maxReceive <= 0) return 0;
         int energyReceived = Math.min(this.getMaxEnergy() - this.getEnergy(), maxReceive);
         if (!simulate) {
             this.setEnergy(this.getEnergy() + energyReceived);
@@ -15,7 +22,8 @@ public interface IEnergyStorage {
         return energyReceived;
     }
 
-    default public int extractEnergy(int maxExtract, boolean simulate) {
+    default int extractEnergy(int maxExtract, boolean simulate) {
+        if (!canExtract() || maxExtract <= 0) return 0;
         int energyExtracted = Math.min(this.getEnergy(), maxExtract);
         if (!simulate) {
             this.setEnergy(this.getEnergy() - energyExtracted);
@@ -23,4 +31,3 @@ public interface IEnergyStorage {
         return energyExtracted;
     }
 }
-

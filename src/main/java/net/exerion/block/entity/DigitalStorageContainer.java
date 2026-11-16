@@ -12,7 +12,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class DigitalStorageContainer
 implements Container {
-    private final List<SlotRef> slots = new ArrayList<SlotRef>();
+    private final List<SlotRef> slots = new ArrayList<>();
+    private final List<BlockPos> cachedContainerPositions = new ArrayList<>();
+    private long lastFullScanTime = 0L;
+    private static final long SCAN_INTERVAL_MS = 2000L;
     private final BlockPos terminalPos;
     private final Level level;
 
@@ -27,15 +30,53 @@ implements Container {
         if (this.level == null) {
             return;
         }
+
+        long now = System.currentTimeMillis();
+        boolean useFastPath = !this.cachedContainerPositions.isEmpty() && (now - this.lastFullScanTime < SCAN_INTERVAL_MS);
+
+        if (useFastPath) {
+            boolean valid = true;
+            for (BlockPos cPos : this.cachedContainerPositions) {
+                if (!this.level.isLoaded(cPos)) {
+                    valid = false;
+                    break;
+                }
+                BlockEntity be = this.level.getBlockEntity(cPos);
+                if (be instanceof Container container && !(be instanceof DigitalStorageTerminalBlockEntity)) {
+                    int size = container.getContainerSize();
+                    for (int s = 0; s < size; ++s) {
+                        this.slots.add(new SlotRef(container, s));
+                        if (this.slots.size() >= 54) {
+                            return;
+                        }
+                    }
+                } else {
+                    valid = false;
+                    break;
+                }
+            }
+            if (valid && !this.slots.isEmpty()) {
+                return;
+            }
+            this.slots.clear();
+        }
+
+        // Full scan
+        this.cachedContainerPositions.clear();
+        this.lastFullScanTime = now;
         int radius = 6;
         BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
-        for (int x = -radius; x <= radius; ++x) {
-            for (int y = -radius; y <= radius; ++y) {
+        for (int y = -radius; y <= radius; ++y) {
+            for (int x = -radius; x <= radius; ++x) {
                 for (int z = -radius; z <= radius; ++z) {
                     if (x == 0 && y == 0 && z == 0) continue;
                     mpos.set(this.terminalPos.getX() + x, this.terminalPos.getY() + y, this.terminalPos.getZ() + z);
+                    if (!this.level.isLoaded(mpos)) continue;
+
                     BlockEntity be = this.level.getBlockEntity(mpos);
                     if (!(be instanceof Container container) || be instanceof DigitalStorageTerminalBlockEntity) continue;
+
+                    this.cachedContainerPositions.add(mpos.immutable());
                     int size = container.getContainerSize();
                     for (int s = 0; s < size; ++s) {
                         this.slots.add(new SlotRef(container, s));

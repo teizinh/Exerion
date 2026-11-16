@@ -86,6 +86,27 @@ IEnergyStorage {
     }
 
     @Override
+    public boolean canReceive() {
+        return false;
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (level != null && !level.isClientSide()) {
+            net.exerion.energy.GlobalEnergyNetwork.registerDevice(level, this.worldPosition, true, this.getEnergy(), 40);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (this.level != null && !this.level.isClientSide()) {
+            net.exerion.energy.GlobalEnergyNetwork.removeDevice(this.level, this.worldPosition);
+        }
+    }
+
+    @Override
     public int getEnergy() {
         return this.energy;
     }

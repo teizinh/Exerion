@@ -94,6 +94,9 @@ public class GlobalEnergyNetwork {
             }
             BlockEntity be = level.getBlockEntity(targetPos);
             if (be instanceof IEnergyStorage storage && !(be instanceof CableBlockEntity)) {
+                if (!storage.canReceive()) {
+                    continue;
+                }
                 int received = storage.receiveEnergy(remaining, simulate);
                 remaining -= received;
                 if (remaining <= 0) {
